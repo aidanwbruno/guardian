@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,9 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.vdevcode.guardian.adapters.AppBaseAdapter
 import com.vdevcode.guardian.helpers.Helper
@@ -28,7 +32,7 @@ import java.lang.RuntimeException
 /**
  * A simple [Fragment] subclass.
  */
-abstract class BaseFragment(@NotNull protected var viewId: Int, @NotNull protected var toolbar_title: String) : Fragment() {
+abstract class BaseFragment(@NotNull protected var viewId: Int, @NotNull protected var title: String, protected var back: Boolean, protected var icon: Int?) : Fragment() {
 
 
     protected var params = arrayMapOf<String, Any>()
@@ -44,11 +48,17 @@ abstract class BaseFragment(@NotNull protected var viewId: Int, @NotNull protect
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupToolbar(true, true)
+        setupToolbar()
         buildFragment()
     }
 
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> findNavController().popBackStack()
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
     /**
      * This method will be called on onCreate method of BaseFragment, to get All parrams sended to current fragment
@@ -57,31 +67,39 @@ abstract class BaseFragment(@NotNull protected var viewId: Int, @NotNull protect
 
     protected open fun setupButtons() {}
 
-    protected open fun setupToolbar(home: Boolean, homeIcon: Boolean) {
-        val act = requireActivity() as AppCompatActivity
-        with(act) {
-            app_toolbar?.setTitleTextColor(Color.WHITE)
-            setSupportActionBar(app_toolbar)
-            supportActionBar?.let {
-                it.title = toolbar_title
-                if (home) {
-                    it.setDisplayHomeAsUpEnabled(home)
-                    it.setHomeButtonEnabled(homeIcon)
-                }
+    protected open fun setupToolbar(vararg iconClick: (View?) -> Unit) {
+        (requireActivity() as AppCompatActivity).let {
+            app_toolbar?.title = title.toUpperCase()
+
+            icon?.let {
+                app_toolbar.setNavigationIcon(it)
             }
+            // app_toolbar?.setNavigationOnClickListener(View.OnClickListener { Vocc.toast("sdsds") })
+            //app_toolbar?.setupWithNavController(findNavController(), AppBarConfiguration(findNavController().graph))
+            it.setSupportActionBar(app_toolbar)
+            it.supportActionBar?.run {
+                if (back) {
+                    setDisplayHomeAsUpEnabled(true)
+                    setHomeButtonEnabled(true)
+                    setDisplayShowHomeEnabled(true)
+                }
+
+            }
+            setHasOptionsMenu(true)
         }
+
     }
 
 
     protected open fun setupViewModel(model: BaseModel, params: Map<String, Any>) {
-        appViewModel = ViewModelProvider(requireActivity(), AppViewModel.AppViewModelFactory(requireActivity().application, model)).get(AppViewModel::class.java)
+        appViewModel = ViewModelProvider(this, AppViewModel.AppViewModelFactory(requireActivity().application, model, params)).get(AppViewModel::class.java)
     }
 
     protected open fun addObserver() {}
 
     protected open fun addObserver(fildLiveData: LiveData<MutableList<BaseModel>>, updateList: Boolean) {
         if (!fildLiveData.hasObservers()) {
-            fildLiveData.observe(this, Observer {
+            fildLiveData.observe(requireActivity(), Observer {
                 if (updateList) {
                     appAdapter?.updateList(it)
                 }

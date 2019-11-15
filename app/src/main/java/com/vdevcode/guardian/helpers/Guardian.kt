@@ -42,9 +42,12 @@ class Guardian : Application() {
         }
 
         fun snack(view: View, msg: String) {
-            Snackbar.make(view, msg, Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(view, msg, Snackbar.LENGTH_LONG).show()
         }
 
+        fun snack(view: View, msg: String, time: Int) {
+            Snackbar.make(view, msg, time).show()
+        }
 
         fun checkPemission(context: Context, permission: String) {
             if (ContextCompat.checkSelfPermission(
@@ -91,7 +94,7 @@ class Guardian : Application() {
         }
 
 
-        fun dialog(title: String, msg: String) = MaterialAlertDialogBuilder(appContext!!).apply {
+        fun dialog(context: Context, title: String, msg: String) = MaterialAlertDialogBuilder(context).apply {
             setTitle(title)
             setMessage(msg)
         }
@@ -153,6 +156,8 @@ class Guardian : Application() {
             val prefDB = appContext?.getSharedPreferences(ConstantHelper.PREFERENCE_SESSION_DB, Context.MODE_PRIVATE)
             prefDB?.edit()?.putString(key, value)?.apply()
         }
+
+        fun getPrefDB() = appContext?.getSharedPreferences(ConstantHelper.PREFERENCE_SESSION_DB, Context.MODE_PRIVATE)
 
 
     }

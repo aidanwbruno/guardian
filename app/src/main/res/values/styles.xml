@@ -11,8 +11,25 @@
     </style>
 
 
+    <style name="tilTheme" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxBackgroundColor">#D1D0D0</item>
+        <item name="boxCornerRadiusBottomEnd">6dp</item>
+        <item name="boxCornerRadiusBottomStart">6dp</item>
+        <item name="boxStrokeColor">@android:color/transparent</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="android:padding">4dp</item>
+    </style>
+
+
     <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Medium">E
         <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+    <style name="SimpleToolbar" parent="@android:style/TextAppearance.Medium">E
+        <item name="android:textSize">16sp</item>
         <item name="android:textColor">#fff</item>
         <item name="android:textStyle">bold</item>
     </style>

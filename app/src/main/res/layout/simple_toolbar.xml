@@ -4,7 +4,6 @@
     android:id="@+id/app_toolbar_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="top"
     android:elevation="4dp">
 
     <androidx.appcompat.widget.Toolbar
@@ -12,10 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="4dp"
-        android:isScrollContainer="true"
-        app:layout_collapseMode="pin"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:subtitleTextColor="#fff"
+        app:titleTextAppearance="@style/SimpleToolbar"
         app:titleTextColor="#fff" />
 
 </com.google.android.material.appbar.AppBarLayout>

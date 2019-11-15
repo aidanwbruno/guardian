@@ -1,6 +1,7 @@
 package com.vdevcode.guardian.models
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.IgnoreExtraProperties
@@ -37,13 +38,15 @@ class AppUser(
     var estado: String,
 
     var motorista: Boolean?,
-    var carro: Boolean?,
-    var marca: String?,
-    var modelo: String?,
-    var cor: String?
+    @Ignore
+    var CARROS: MutableMap<String, Car>? = mutableMapOf()
+
 ) : BaseModel() {
 
-    constructor() : this(0, "", "", "", "", "", "", "", "", "", "", "", null, null, null, null, null) {}
+    @Ignore
+    var LOCATIONS: MutableMap<String, String>? = mutableMapOf()
+
+    constructor() : this(0, "", "", "", "", "", "", "", "", "", "", "", null, mutableMapOf()) {}
 
     init {
         collectionName = ConstantHelper.FIREBASE_USER_COLLECTION_NAME

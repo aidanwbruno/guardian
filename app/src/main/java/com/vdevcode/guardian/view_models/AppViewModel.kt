@@ -9,24 +9,22 @@ import com.vdevcode.guardian.helpers.Guardian
 import com.vdevcode.guardian.models.BaseModel
 import com.vdevcode.guardian.repo.AppRepo
 
-class AppViewModel(application: Application, val model: BaseModel) :
+class AppViewModel(application: Application, val model: BaseModel, var params:Map<String, Any>) :
     AndroidViewModel(application) {
 
-    private var repo: AppRepo? = null
     var all: LiveData<MutableList<BaseModel>>? = null
 
     init {
-        repo = AppRepo(Guardian.appContext!!, model)
-        all = repo?.all()
+        all = AppRepo.all(model)
     }
 
     fun save(model: BaseModel) {
-        repo?.insert(model)
+        AppRepo.insert(model)
     }
 
-    open class AppViewModelFactory(private val mApplication: Application, private val model: BaseModel) : ViewModelProvider.Factory {
+    open class AppViewModelFactory(private val mApplication: Application, private val model: BaseModel, var params:Map<String, Any>) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return AppViewModel(mApplication, model) as T
+            return AppViewModel(mApplication, model, params) as T
         }
     }
 

@@ -8,6 +8,7 @@ import android.net.Uri
 object ConstantHelper {
 
     val APP_PERMISSION_REQ_CODE = 2
+    const val APP_STATUS_LISTENING = "app_mode_on"
 
 
     val USER_PROFILE_NAME_MANAGER = "Gerente"
@@ -31,12 +32,13 @@ object ConstantHelper {
     /**
      * Tag para logs do Applicativo
      */
-    val APP_LOG_TAG = "VOCC_TAG"
+    val APP_LOG_TAG = "GUARDIAN_TAG"
 
     //=======================================  FIREBASE CONSTANTS ========================================================
 
     val FIREBASE_USER_COLLECTION_NAME = "USUARIOS"
-    val FIREBASE_POST_COLLECTION_NAME = "POSTS"
+    val FIREBASE_ALERT_COLLECTION_NAME = "ALERTAS"
+    val FIREBASE_USER_LOCATIONS_COLLECTION_NAME = "LOCATIONS"
 
 
     val AUTO_START_INTENTS = arrayOf(

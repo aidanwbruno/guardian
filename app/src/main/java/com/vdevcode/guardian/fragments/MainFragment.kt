@@ -4,97 +4,116 @@ package com.vdevcode.guardian.fragments
 import android.Manifest
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.media.AudioManager
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.gson.Gson
 import com.sac.speech.GoogleVoiceTypingDisabledException
 import com.sac.speech.Speech
 import com.sac.speech.SpeechDelegate
 import com.sac.speech.SpeechRecognitionNotAvailable
 import com.vdevcode.guardian.R
-import com.vdevcode.guardian.extensions.bg
-import com.vdevcode.guardian.helpers.ConstantHelper
-import com.vdevcode.guardian.helpers.Guardian
-import com.vdevcode.guardian.helpers.Helper
+import com.vdevcode.guardian.auth.AppAuth
+import com.vdevcode.guardian.database.AppFireDB
+import com.vdevcode.guardian.helpers.*
+import com.vdevcode.guardian.models.Alert
 import kotlinx.android.synthetic.main.fragment_main.*
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App"), SpeechDelegate, Speech.stopDueToDelay {
+class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false, R.drawable.ic_security), SpeechDelegate, Speech.stopDueToDelay {
 
     private var voiceText = ""
     private var words = ArrayList<String>()
-    private var ouvindo = false;
+    private var ouvindo = false
+    private var commandTemp = 0
+    private val googleLocationHelper = GoogleLocationHelper()
 
 
-    /*
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        MainActivity.toolbar(requireActivity() as AppCompatActivity, "BCAgnello", R.drawable.ic_menu)
+    override fun setupParams() {
         Speech.init(context, context?.packageName)
         //Speech.getInstance().setPreferOffline(true)
         Speech.getInstance().setLocale(Locale("pt", "BR"))
+        //Speech.getInstance().setPreferOffline(true)
+        // Speech.getInstance().setTransitionMinimumDelay(5000)
+        //Speech.getInstance().setStopListeningAfterInactivity()TransitionMinimumDelay(5000)
         Speech.getInstance().setListener(this)
-        return inflater.inflate(R.layout.fragment_main, container, false)
-    }
 
-     */
-
-    override fun setupParams() {
-        super.setupParams()
+        Helper.LogE("LISTENING ? : ${Speech.getInstance()?.isListening}")
     }
 
     override fun buildFragment() {
-        arguments?.let {
-            it.getStringArrayList("words")?.let {
-                words = it
-            }
-        }
-
         Guardian.requestAppPermissions(
             this,
             Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_FINE_LOCATION
         )
 
         enableAutoStart()
 
         setupButtons()
+
+        //Guardian.toast("Localização pela rede: Lat: ${LocationHelper.getNetworkLocation(context!!)?.longitude}, Long: ${LocationHelper.getNetworkLocation(context!!)?.longitude}")
+
+        // LocationHelper.checkUserGPS(context!!)
+        googleLocationHelper.init(context!!)
+        googleLocationHelper.startLocationUpdates(activity!!) // get the locations
+
     }
 
-    // Cards Views Clicables
-    override fun setupButtons() {
-        efab_start_listening.setOnClickListener {
-            startListening()
-        }
-        fab_about_app.setOnClickListener {
-            findNavController().navigate(R.id.action_goto_about_app)
-        }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        googleLocationHelper.checkFixResult(requestCode, resultCode)
     }
 
+    override fun onResume() {
+        super.onResume()
+        ouvindo = false//Guardian.getPrefDB()?.getBoolean(ConstantHelper.APP_STATUS_LISTENING, false)!!
+        Guardian.getPrefDB()?.edit()?.putBoolean(ConstantHelper.APP_STATUS_LISTENING, false)?.apply()
+    }
 
-    // verificar se o result ta on antes de parar de ouvir, pois as vezes demora uns segundionhos
-    fun processResult() {
-        val map = mutableMapOf<String, Int>()
-        val result = voiceText.trim().split(" ")
-        result.forEach { p ->
-            words.forEach { w ->
-                if (!p.isBlank() && !w.isBlank() && p.equals(w, true)) {
-                    if (map.containsKey(p.toLowerCase())) {
-                        val cont = map.getValue(p.toLowerCase())
-                        map.put(p.toLowerCase(), cont + 1)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            ConstantHelper.APP_PERMISSION_REQ_CODE -> {
+                for (p in 0..permissions.size - 1) {
+                    if (permissions[p] == Manifest.permission.ACCESS_FINE_LOCATION && grantResults[p] == PackageManager.PERMISSION_GRANTED) {
+                        //val location = LocationHelper.getGpsLocation(context!!)
+                        googleLocationHelper.startLocationUpdates(activity!!)
                     } else {
-                        map.put(p.toLowerCase(), 1)
+                        Guardian.requestSinglePermission(activity!!, Manifest.permission.ACCESS_FINE_LOCATION)
                     }
                 }
             }
         }
-        var textFinal = "Resultado do Teste: \n"
-        map.forEach {
-            textFinal = textFinal.plus("${it.key} ( ${it.value} vezes )\n")
+    }
+
+
+    // Cards Views Clicables
+    override fun setupButtons() {
+
+        efab_start_listening.setOnClickListener {
+            ouvindo = Guardian.getPrefDB()?.getBoolean(ConstantHelper.APP_STATUS_LISTENING, false)!!
+            ouvindo = !ouvindo
+            if (ouvindo) {
+                startListening()
+                Guardian.getPrefDB()?.edit()?.putBoolean(ConstantHelper.APP_STATUS_LISTENING, ouvindo)?.apply()
+
+            } else {
+                stopListening()
+                Guardian.getPrefDB()?.edit()?.putBoolean(ConstantHelper.APP_STATUS_LISTENING, ouvindo)?.apply()
+            }
+
         }
-        // tv_text_said.text = textFinal
+        fab_about_app.setOnClickListener {
+            findNavController().navigate(R.id.action_goto_about_app)
+        }
     }
 
 
@@ -112,42 +131,47 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App"), Speec
     }
 
 
-    fun startListening() {
-        if (ouvindo) {
+    fun stopListening() {
+        if (Speech.getInstance() != null) {
             Speech.getInstance().shutdown()
-            efab_start_listening.bg(android.R.color.holo_red_dark)
-            efab_start_listening.setImageDrawable(context?.getDrawable(R.drawable.ic_audio_off))
-            tv_guardian_status.text = "INICIAR GUARDIAN"
-            processResult()
+            efab_start_listening.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context!!, android.R.color.holo_red_dark)))
+            efab_start_listening.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.ic_audio_off))
+            tv_guardian_status.text = "INICIAR o GUARDIAN"
+            //processResult()
             unmuteBeep()
-            ouvindo = false
-        } else {
-            ouvindo = true
-            try {
-                Speech.init(context, context?.packageName)
-                Speech.getInstance().setLocale(Locale("pt", "BR"))
-                Speech.getInstance().setListener(this)
-                //tv_text_said.text = ""
-                voiceText = ""
-                efab_start_listening.setBackgroundColor(ActivityCompat.getColor(context!!, android.R.color.holo_green_dark))
-                efab_start_listening.setImageDrawable(context?.getDrawable(R.drawable.ic_audio_on))
-                tv_guardian_status.text = "GUARDIAN INICIADO"
-                Speech.getInstance().stopTextToSpeech()
-                Speech.getInstance().startListening(null, this)
-
-            } catch (ex: SpeechRecognitionNotAvailable) {
-                Helper.LogE("Speech not Available")
-                Guardian.dialog("", "O Reconhecimento de Voz do seu aparelho está desativado não existe").setPositiveButton("Abrir Connfiguurações", DialogInterface.OnClickListener { dialogInterface, i ->
-                    Guardian.openVoiceSettings()
-                }).create().show()
-            } catch (go: GoogleVoiceTypingDisabledException) {
-                Helper.LogE("Google Typing error")
-                Guardian.dialog("", "A digitação por voz do seu aparelho está desativada").setPositiveButton("Abrir Connfiguurações", DialogInterface.OnClickListener { dialogInterface, i ->
-                    Guardian.openVoiceSettings()
-                }).create().show()
-            }
-            //muteBeep()
         }
+    }
+
+
+    fun startListening() {
+        //if (ouvindo) {
+        //  stopListening()
+        // } else {
+        try {
+            Speech.init(context, context?.packageName)
+            Speech.getInstance().setLocale(Locale("pt", "BR"))
+            Speech.getInstance().setListener(this)
+            //tv_text_said.text = ""
+            voiceText = ""
+            efab_start_listening.setBackgroundTintList(ContextCompat.getColorStateList(context!!, android.R.color.holo_green_dark))
+            efab_start_listening.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.ic_audio_on))
+            tv_guardian_status.text = "GUARDIAN CAPTANDO..."
+            Speech.getInstance().stopTextToSpeech()
+            Speech.getInstance().startListening(null, this)
+
+        } catch (ex: SpeechRecognitionNotAvailable) {
+            Helper.LogE("Speech not Available")
+            Guardian.dialog(context!!, "", "O Reconhecimento de Voz do seu aparelho está desativado não existe").setPositiveButton("Abrir Connfiguurações", DialogInterface.OnClickListener { dialogInterface, i ->
+                Guardian.openVoiceSettings()
+            }).create().show()
+        } catch (go: GoogleVoiceTypingDisabledException) {
+            Helper.LogE("Google Typing error")
+            Guardian.dialog(context!!, "", "A digitação por voz do seu aparelho está desativada").setPositiveButton("Abrir Connfiguurações", DialogInterface.OnClickListener { dialogInterface, i ->
+                Guardian.openVoiceSettings()
+            }).create().show()
+        }
+        //muteBeep()
+        //}
     }
 
 
@@ -155,17 +179,6 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App"), Speec
     }
 
     override fun onSpeechPartialResults(results: MutableList<String>?) {
-        Helper.LogI("Parial: ${results.toString()}")
-
-        /*results?.forEach { result ->
-            if (!result.isBlank() && result.length > 1 && !result.equals("\n")) {
-                val t = tv_text_said.text.toString()
-                voiceText = voiceText.plus(" $result ")
-                //tv_text_said.text = voiceText
-            }
-        }
-
-         */
     }
 
     override fun onSpeechRmsChanged(value: Float) {
@@ -174,11 +187,43 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App"), Speec
 
     override fun onSpeechResult(result: String?) {
         if (!result.isNullOrBlank() && result.length > 1 && !result.equals("\n")) {
-            // val t = tv_text_said.text.toString()
-            voiceText = voiceText.plus(" $result ")
-            //tv_text_said.text = voiceText
+            val normalizer = Helper.normalizeText(result)
+            Helper.LogI("RESULT : $result")
+            Helper.commands.forEach {
+                if (normalizer.equals(it, true)) {
+                    commandTemp++
+                    if (commandTemp > 3) {
+                        commandTemp = 0
+                        //send alert to user on firebase
+                        sendAlert()
+                        Guardian.dialog(context!!, "ALerta", "Um ALerta foi Acionado, aqui pegamos todas as informações e mandaremos para o serividor", {}, {}, "Ok").show()
+                    }
+                    Guardian.toast("Achou palavra")
+                }
+            }
         }
-        Helper.LogI("RESULT : $voiceText")
+    }
+
+    private fun sendAlert() {
+
+        val loc = Gson().toJson(googleLocationHelper.currentLocation)
+        if (AppFireDB.currentAlert == null) {
+            val alert = Alert().apply {
+                count = 1
+                open = true
+                usuarioKey = AppAuth.getUserId()
+            }
+            AppFireDB.insertModel(alert, OnCompleteListener {
+                if (it.isSuccessful) {
+                    AppFireDB.currentAlert = alert
+                    AppFireDB.currentAlert?.firestoreKey = it.result?.id!!
+                } else {
+                    AppFireDB.currentAlert = null
+                }
+            })
+        } else {
+            AppFireDB.updateCurrentAlert()
+        }
     }
 
     override fun onSpecifiedCommandPronounced(event: String?) {
@@ -200,12 +245,12 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App"), Speec
                 }
             } catch (ex: SpeechRecognitionNotAvailable) {
                 Helper.LogE("Speech not Available")
-                Guardian.dialog("", "O Reconhecimento de Voz do seu aparelho está desativado não existe").setPositiveButton("Abrir Connfiguurações", DialogInterface.OnClickListener { dialogInterface, i ->
+                Guardian.dialog(context!!, "", "O Reconhecimento de Voz do seu aparelho está desativado não existe").setPositiveButton("Abrir Connfiguurações", DialogInterface.OnClickListener { dialogInterface, i ->
                     Guardian.openVoiceSettings()
                 }).create().show()
             } catch (go: GoogleVoiceTypingDisabledException) {
                 Helper.LogE("Google Typing error")
-                Guardian.dialog("", "A digitação por voz do seu aparelho está desativada").setPositiveButton("Abrir Connfiguurações", DialogInterface.OnClickListener { dialogInterface, i ->
+                Guardian.dialog(context!!, "", "A digitação por voz do seu aparelho está desativada").setPositiveButton("Abrir Connfiguurações", DialogInterface.OnClickListener { dialogInterface, i ->
                     Guardian.openVoiceSettings()
                 }).create().show()
             } catch (ex: Exception) {
@@ -216,6 +261,16 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App"), Speec
     }
 
     override fun onDestroy() {
+        try {
+            Guardian.getPrefDB()?.edit()?.putBoolean(ConstantHelper.APP_STATUS_LISTENING, false)?.apply()
+            if (Speech.getInstance().isListening) {
+                Speech.getInstance().shutdown()
+            }
+            unmuteBeep()
+        } catch (ex: Exception) {
+            Helper.LogE("Erro no DESTROY: $words")
+        }
+        Helper.LogE("ON DESTROY")
         super.onDestroy()
     }
 

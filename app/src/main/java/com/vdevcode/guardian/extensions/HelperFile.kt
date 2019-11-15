@@ -32,9 +32,9 @@ fun View.mhide() {
     this.visibility = View.GONE
 }
 
-fun View.mshow() {
-    this.visibility = View.VISIBLE
-}
+fun View.mshow() {this.visibility = View.VISIBLE}
+
+fun View.visible() = this.visibility == View.VISIBLE
 
 fun MaterialButton.newIcon(icon: Int) {
     this.icon = ActivityCompat.getDrawable(context, icon)

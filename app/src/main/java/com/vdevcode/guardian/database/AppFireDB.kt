@@ -4,8 +4,12 @@ package com.vdevcode.guardian.database
 import android.renderscript.Sampler
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vdevcode.guardian.auth.AppAuth
+import com.vdevcode.guardian.helpers.ConstantHelper
+import com.vdevcode.guardian.helpers.Helper
+import com.vdevcode.guardian.models.Alert
 import com.vdevcode.guardian.models.BaseModel
 
 /**
@@ -14,10 +18,42 @@ import com.vdevcode.guardian.models.BaseModel
  */
 object AppFireDB {
 
+    var currentAlert: Alert? = null
+
+    fun updateCurrentAlert() {
+        currentAlert?.let { alertDoc ->
+            if (alertDoc.open) {
+                val docref = findDocumentById(alertDoc) // verificar se tá ativo
+                docref.get().addOnCompleteListener { ref ->
+                    if (ref.isSuccessful) {
+                        val alert = ref.result?.toObject(Alert::class.java)
+                        alert?.let {
+                            alert.firestoreKey = ref.result?.id!!
+                            if (alert.open) {
+                                DB().collection(alertDoc.collectionName).document(alertDoc.firestoreKey).update(
+                                    mapOf("count" to FieldValue.increment(1))
+                                ).addOnCompleteListener {
+                                    if (it.isSuccessful) {
+                                        Helper.LogI("Alerta Atualizado")
+                                    } else {
+                                        if (it.exception != null) {
+                                            Helper.LogI("Erro ao atualizar alerta: ${it.exception?.message}")
+                                        }
+                                    }
+                                }
+                            } else {
+                                currentAlert = null // alert was closed
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     fun insertModel(model: BaseModel) {
         DB().collection(model.collectionName).add(model)
     }
-
 
     fun insertModel(model: BaseModel, completeListener: OnCompleteListener<DocumentReference>) {
         DB().collection(model.collectionName)
@@ -59,6 +95,10 @@ object AppFireDB {
 
     fun findDocumentById(model: BaseModel): DocumentReference {
         return DB().collection(model.collectionName).document(model.firestoreKey)
+    }
+
+    fun findUserById(key: String): DocumentReference {
+        return DB().collection(ConstantHelper.FIREBASE_USER_COLLECTION_NAME).document(key)
     }
 
     fun deleteDocument(model: BaseModel) {

@@ -36,6 +36,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_user_name"
+                    style="@style/tilTheme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -53,6 +54,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_user_email"
+                    style="@style/tilTheme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:errorEnabled="true">
@@ -68,6 +70,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_user_cpf"
+                    style="@style/tilTheme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:errorEnabled="true">
@@ -84,6 +87,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_user_date"
+                    style="@style/tilTheme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:errorEnabled="true">
@@ -99,6 +103,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_user_pass"
+                    style="@style/tilTheme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:errorEnabled="true"
@@ -115,6 +120,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_user_chekpass"
+                    style="@style/tilTheme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:errorEnabled="true"
@@ -124,6 +130,7 @@
                         android:id="@+id/et_newuser_checkpass"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@null"
                         android:hint="Confirmar Senha de Acesso"
                         android:inputType="textPassword" />
 
@@ -149,6 +156,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_user_cep"
+                    style="@style/tilTheme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -165,6 +173,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_user_rua"
+                    style="@style/tilTheme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:errorEnabled="true">
@@ -179,7 +188,24 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_user_complemento"
+                    style="@style/tilTheme"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:errorEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_newuser_complemento"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Complemento"
+                        android:inputType="text" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_user_num"
+                    style="@style/tilTheme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:errorEnabled="true">
@@ -196,6 +222,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_user_bairro"
+                    style="@style/tilTheme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:errorEnabled="true">
@@ -212,6 +239,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_user_city"
+                    style="@style/tilTheme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:errorEnabled="true">
@@ -227,6 +255,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_user_uf"
+                    style="@style/tilTheme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:errorEnabled="true">
@@ -249,12 +278,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
-                    android:text="Outras Informações (Opicional)"
+                    android:text="Outras Informações (Opcional)"
                     android:textColor="@color/text_color"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -270,10 +298,38 @@
                     android:id="@+id/ll_has_car"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+
+                    <CheckBox
+                        android:id="@+id/cb_diver"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Trabalha com Taxi ou App de Corrida?"
+                        android:textColor="@color/text_color" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_user_placa"
+                        style="@style/tilTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:errorEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_newuser_placa"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Placa"
+                            android:inputType="text" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_user_marca"
+                        style="@style/tilTheme"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
@@ -290,6 +346,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_user_model"
+                        style="@style/tilTheme"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:errorEnabled="true">
@@ -305,6 +362,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_user_cor"
+                        style="@style/tilTheme"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:errorEnabled="true">
@@ -318,12 +376,23 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <CheckBox
-                        android:id="@+id/cb_diver"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mb_add_new_car"
+                        style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Trabalha com Taxi ou App de Corrida?"
-                        android:textColor="@color/text_color" />
+                        android:layout_gravity="center"
+                        android:layout_marginTop="16dp"
+                        android:backgroundTint="@color/colorAccent"
+                        android:minWidth="130dp"
+                        android:text="Salvar Carro" />
+
+                    <TextView
+                        android:id="@+id/tv_mycars_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        tools:text="Carro Tal, Plca: 37747, Marco, azeu" />
 
                 </LinearLayout>
 
@@ -339,8 +408,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:backgroundTint="@color/colorAccent"
-        android:src="@android:drawable/ic_menu_save"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:src="@drawable/ic_done"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="#fff" />

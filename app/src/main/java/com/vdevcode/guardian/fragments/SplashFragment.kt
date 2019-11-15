@@ -15,11 +15,15 @@ import kotlinx.coroutines.launch
 /**
  * A simple [Fragment] subclass.
  */
-class SplashFragment : BaseFragment(R.layout.fragment_splash, "Login") {
+class SplashFragment : BaseFragment(R.layout.fragment_splash, "Login", false, null) {
 
     override fun buildFragment() {
+    }
+
+    override fun onResume() {
+        super.onResume()
         GlobalScope.launch {
-            delay(3000)
+            delay(2000)
             findNavController().navigate(R.id.action_goto_login)
         }
     }

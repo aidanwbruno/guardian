@@ -33,25 +33,37 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_login_email"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_login_email"
+            style="@style/tilTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:hint="Email"
-            android:inputType="textEmailAddress" />
+            android:layout_marginTop="30dp">
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_login_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_login_password"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_login_pass"
+            style="@style/tilTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="Senha"
-            android:inputType="textPassword" />
+            android:layout_marginTop="20dp">
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_login_password"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Senha"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -112,10 +124,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:focusable="true"
         android:minWidth="130dp"
         android:text="Criar Minha conta"
         android:textColor="@color/colorAccent"
         android:textStyle="bold"
+        android:foreground="?android:selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
