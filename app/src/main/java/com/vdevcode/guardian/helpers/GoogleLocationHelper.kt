@@ -35,7 +35,6 @@ const val REQUEST_CHECK_SETTINGS = 383 // 5 secounds
 
 class GoogleLocationHelper {
 
-
     var fusedLocationClient: FusedLocationProviderClient? = null
     var locationSettingsClient: SettingsClient? = null
     var locationSettingsReq: LocationSettingsRequest? = null
@@ -61,7 +60,7 @@ class GoogleLocationHelper {
     }
 
 
-    fun startLocationUpdates(context: Activity) {
+    fun startLocationUpdates(context: Activity?) {
         locationSettingsClient?.let {
             val task = it.checkLocationSettings(locationSettingsReq)
             task.addOnCompleteListener {
@@ -70,26 +69,31 @@ class GoogleLocationHelper {
                     val response = it.getResult(ApiException::class.java)
                     fusedLocationClient?.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
                 } catch (apiExe: ApiException) {
-                    when (apiExe.statusCode) {
-                        LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
-                            resolveLocationError(context, apiExe)
+                    context?.let {
+                        when (apiExe.statusCode) {
+                            LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
+                                resolveLocationError(context, apiExe)
+                            }
+                            LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> checkUserGPS(context)
                         }
-                        LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> checkUserGPS(context)
                     }
                 }
             }
         }
     }
 
-    fun checkFixResult(reqCode: Int, resCode: Int) {
+    fun checkFixResult(reqCode: Int, resCode: Int): Boolean {
         when (reqCode) {
             REQUEST_CHECK_SETTINGS -> {
                 when (resCode) {
-                    Activity.RESULT_OK -> Helper.LogI("GPS Settings result ok")
-                    Activity.RESULT_CANCELED -> Helper.LogI("User Denied the fix")
+                    Activity.RESULT_OK -> return true
+                    Activity.RESULT_CANCELED -> return false
                 }
             }
+            else -> return false
         }
+
+        return false
     }
 
     private fun resolveLocationError(context: Activity, exception: ApiException) {
@@ -111,31 +115,29 @@ class GoogleLocationHelper {
     private fun addLocationCallback() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult?) {
-                super.onLocationResult(result)
                 result?.lastLocation?.let {
                     currentLocation = UserLocation().apply {
                         longitude = it.longitude
                         latitude = it.latitude
                     }
+                    Helper.LogW("Location Change")
                     val locationString = currentLocation?.toJson()
                     locationString?.let { loc ->
                         AppFireDB.currentAlert?.let { alert ->
                             AppFireDB.findDocumentById(alert).get().addOnCompleteListener { ref ->
                                 if (ref.isSuccessful) {
                                     val alertDoc = ref.result?.toObject(Alert::class.java)
-                                    if (alertDoc != null) {
-                                        if (alertDoc.open) {
-                                            // update user location
-                                            AppFireDB.findUserById(AppAuth.getUserId()).collection(ConstantHelper.FIREBASE_USER_LOCATIONS_COLLECTION_NAME).document(Calendar.getInstance().timeInMillis.toString()).set(mapOf("point" to loc)).addOnCompleteListener {
-                                                if (it.isSuccessful) {
-                                                    Helper.LogW("Location added to user")
-                                                    Helper.LogW("Location :  LAT: ${currentLocation?.latitude} , LNG: ${currentLocation?.longitude}")
-                                                    Guardian.toast("Location (${currentLocation?.latitude}, ${currentLocation?.longitude})")
-                                                }
+                                    if (alertDoc != null && alertDoc.open) {
+
+                                        // update user location
+                                        AppFireDB.findUserById(AppAuth.getUserId()).collection(ConstantHelper.FIREBASE_USER_LOCATIONS_COLLECTION_NAME).document(Calendar.getInstance().timeInMillis.toString()).set(mapOf("point" to loc)).addOnCompleteListener {
+                                            if (it.isSuccessful) {
+                                                Helper.LogW("Location added to user")
+                                                Helper.LogW("Location :  LAT: ${currentLocation?.latitude} , LNG: ${currentLocation?.longitude}")
+                                                Guardian.toast("Location (${currentLocation?.latitude}, ${currentLocation?.longitude})")
                                             }
-                                        } else {
-                                            AppFireDB.currentAlert = null // alert was closed
                                         }
+
                                     } else {
                                         AppFireDB.currentAlert = null // alert was closed
                                     }

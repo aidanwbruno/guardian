@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.AddCommandsFragment">
+
+    <include layout="@layout/simple_toolbar" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="16dp"
+        android:layout_marginTop="?actionBarSize"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nsv_words"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:elevation="3dp"
+            android:fillViewport="true"
+            android:padding="4dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toTopOf="@id/tv_selectword_title"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_command_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="6dp"
+                            tools:listitem="@layout/layout_command_item" />
+
+                    </FrameLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcv_add_custom_word"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="5dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_command_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawableStart="@drawable/ic_add"
+                android:drawablePadding="8dp"
+                android:hint="Cadastrar novo Comando"
+                android:lines="1"
+                android:maxLines="1"
+                android:paddingStart="8dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                android:textSize="20sp" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <TextView
+            android:id="@+id/tv_selectword_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/mcv_add_custom_word"
+            tools:text="Minhas Palavras" />
+
+        <ImageView
+            android:id="@+id/iv_save_word"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:elevation="3dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_send"
+            app:layout_constraintBottom_toBottomOf="@id/mcv_add_custom_word"
+            app:layout_constraintEnd_toEndOf="@id/mcv_add_custom_word"
+            app:layout_constraintTop_toTopOf="@id/mcv_add_custom_word" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

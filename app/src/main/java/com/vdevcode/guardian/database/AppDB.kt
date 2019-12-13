@@ -11,7 +11,7 @@ import com.vdevcode.guardian.models.Command
 abstract class AppDB : RoomDatabase() {
 
     abstract fun getUserDAO(): UserDAO
-    abstract fun getWordDAO(): CommandDAO
+    abstract fun getCommandDAO(): CommandDAO
 
     companion object {
         @Volatile
@@ -24,7 +24,7 @@ abstract class AppDB : RoomDatabase() {
             }
 
             synchronized(this) {
-                val instance = Room.databaseBuilder(context, AppDB::class.java, "guardian_db").build()
+                val instance = Room.databaseBuilder(context, AppDB::class.java, "guardian_db").fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 return instance
             }

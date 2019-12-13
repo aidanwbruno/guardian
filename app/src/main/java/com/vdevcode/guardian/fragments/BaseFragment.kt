@@ -1,8 +1,6 @@
 package com.vdevcode.guardian.fragments
 
 
-import android.app.Application
-import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,23 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.arrayMapOf
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.vdevcode.guardian.adapters.AppBaseAdapter
-import com.vdevcode.guardian.helpers.Helper
 import com.vdevcode.guardian.models.BaseModel
 import com.vdevcode.guardian.view_models.AppViewModel
-import kotlinx.android.synthetic.main.collapsing_toolbar.*
-import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.simple_toolbar.*
 import org.jetbrains.annotations.NotNull
-import java.lang.RuntimeException
 
 /**
  * A simple [Fragment] subclass.
@@ -43,7 +34,7 @@ abstract class BaseFragment(@NotNull protected var viewId: Int, @NotNull protect
     protected abstract fun buildFragment()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        setupParams()
+        createFragment()
         return inflater.inflate(viewId, container, false)
     }
 
@@ -63,7 +54,7 @@ abstract class BaseFragment(@NotNull protected var viewId: Int, @NotNull protect
     /**
      * This method will be called on onCreate method of BaseFragment, to get All parrams sended to current fragment
      */
-    protected open fun setupParams() {}
+    protected open fun createFragment() {}
 
     protected open fun setupButtons() {}
 

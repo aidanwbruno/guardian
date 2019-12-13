@@ -7,8 +7,9 @@ import android.net.Uri
 
 object ConstantHelper {
 
+    const val RESTART_SERVICE_JOB_ID = 354
+
     val APP_PERMISSION_REQ_CODE = 2
-    const val APP_STATUS_LISTENING = "app_mode_on"
 
 
     val USER_PROFILE_NAME_MANAGER = "Gerente"
@@ -97,7 +98,8 @@ object ConstantHelper {
     )
 
     //==================================================== PREFERENCES DB ============================================================
-    val PREFERENCE_SESSION_DB = "VOCC_PREF_DB"
+    const val PREFERENCE_SESSION_DB = "GUARDIAN_PREF_DB"
+    const val APP_STATUS_LISTENING = "SPEECH_MODE_ON"
     //==================================================== Models =============================
 
     val WORD_GROUP_CUSTOM = 2

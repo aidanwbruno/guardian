@@ -17,6 +17,13 @@
             app:exitAnim="@anim/fragment_open_exit"
             app:popEnterAnim="@anim/fragment_close_enter"
             app:popExitAnim="@anim/fragment_close_exit" />
+        <action
+            android:id="@+id/action_goto_new_command"
+            app:destination="@id/addCommandsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -70,4 +77,9 @@
         android:id="@+id/aboutAppFragment"
         android:name="com.vdevcode.guardian.fragments.AboutAppFragment"
         android:label="AboutAppFragment" />
+    <fragment
+        android:id="@+id/addCommandsFragment"
+        android:name="com.vdevcode.guardian.fragments.AddCommandsFragment"
+        android:label="fragment_add_commands"
+        tools:layout="@layout/fragment_add_commands" />
 </navigation>

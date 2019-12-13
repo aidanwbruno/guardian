@@ -30,7 +30,7 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
     private val user = AppUser()
     private var carList = ""
 
-    override fun setupParams() {
+    override fun createFragment() {
         requireActivity().onBackPressedDispatcher.addCallback {
             Guardian.dialog(context!!, "Atenção", "Deseja sair da tela de cadastro?", {
                 findNavController().popBackStack()

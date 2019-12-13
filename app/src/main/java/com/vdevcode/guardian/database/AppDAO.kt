@@ -33,4 +33,7 @@ interface UserDAO : AppDAO<AppUser> {
 interface CommandDAO : AppDAO<Command> {
     @Query("SELECT * FROM commands")
     override fun all(): LiveData<MutableList<Command>>
+
+    @Query("SELECT * FROM commands")
+    fun findAllCommands(): MutableList<Command>
 }

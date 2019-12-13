@@ -31,7 +31,7 @@ class Guardian : Application() {
 
     companion object {
         var appContext: Context? = null
-
+        var online = false
         /**
          * Exibe um toast na tela do usuário com uma mensagem de texto. Em poucos segundos a mesnagem some da tela.
          */
@@ -152,10 +152,6 @@ class Guardian : Application() {
 
         }
 
-        fun putPrefString(key: String, value: String) {
-            val prefDB = appContext?.getSharedPreferences(ConstantHelper.PREFERENCE_SESSION_DB, Context.MODE_PRIVATE)
-            prefDB?.edit()?.putString(key, value)?.apply()
-        }
 
         fun getPrefDB() = appContext?.getSharedPreferences(ConstantHelper.PREFERENCE_SESSION_DB, Context.MODE_PRIVATE)
 

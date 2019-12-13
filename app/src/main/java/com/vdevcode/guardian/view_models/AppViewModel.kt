@@ -10,6 +10,7 @@ import com.vdevcode.guardian.models.BaseModel
 import com.vdevcode.guardian.repo.AppRepo
 
 class AppViewModel(application: Application, val model: BaseModel, var params:Map<String, Any>) :
+
     AndroidViewModel(application) {
 
     var all: LiveData<MutableList<BaseModel>>? = null

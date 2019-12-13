@@ -22,7 +22,6 @@ import java.lang.Exception
 
 class MaxSpeechListenerService : Service(), OnSpeechRecognitionListener {
 
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //  setupRecognizer(intent)
         return super.onStartCommand(intent, flags, startId)
@@ -31,8 +30,6 @@ class MaxSpeechListenerService : Service(), OnSpeechRecognitionListener {
     override fun onCreate() {
         super.onCreate()
         Helper.LogI("CREATE SERVICE")
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val CHANNEL_ID = "my_app"
             val channel = NotificationChannel(
@@ -90,12 +87,6 @@ class MaxSpeechListenerService : Service(), OnSpeechRecognitionListener {
     override fun OnSpeechRecognitionStopped() {
 
     }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
 
     fun initAlarm(context: Context) {
         Helper.LogI("Initi ALARME")

@@ -1,6 +1,5 @@
 package com.vdevcode.guardian.repo
 
-import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import androidx.lifecycle.LiveData
 import com.vdevcode.guardian.database.AppDAO
@@ -41,6 +40,10 @@ object AppRepo {
         return dao.all()
     }
 
+    fun getAllCommands(): MutableList<Command> {
+        return db.getCommandDAO().findAllCommands()
+    }
+
     fun delete(model: BaseModel) {
         val dao = getDAO(model)
         GlobalScope.launch {
@@ -50,7 +53,7 @@ object AppRepo {
 
     private fun getDAO(model: BaseModel): AppDAO<BaseModel> {
         val dao = when (model) {
-            is Command -> db.getWordDAO()
+            is Command -> db.getCommandDAO()
             else -> db.getUserDAO()
         }
         return dao as AppDAO<BaseModel>

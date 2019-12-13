@@ -23,8 +23,7 @@ object AppFireDB {
     fun updateCurrentAlert() {
         currentAlert?.let { alertDoc ->
             if (alertDoc.open) {
-                val docref = findDocumentById(alertDoc) // verificar se tá ativo
-                docref.get().addOnCompleteListener { ref ->
+                findDocumentById(alertDoc).get().addOnCompleteListener { ref ->
                     if (ref.isSuccessful) {
                         val alert = ref.result?.toObject(Alert::class.java)
                         alert?.let {
