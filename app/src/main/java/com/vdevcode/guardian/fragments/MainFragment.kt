@@ -24,6 +24,8 @@ import com.vdevcode.guardian.extensions.mhide
 import com.vdevcode.guardian.extensions.mshow
 import com.vdevcode.guardian.helpers.*
 import com.vdevcode.guardian.models.Alert
+import com.vdevcode.guardion.helpers.AudioFileHelper
+import com.vdevcode.guardion.helpers.FileHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.coroutines.Dispatchers
@@ -35,10 +37,10 @@ import kotlin.collections.ArrayList
 
 class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false, R.drawable.ic_security) {
 
-    private var voiceText = ""
     private var words = ArrayList<String>()
-    private var commandTemp = 0
 
+    override fun homeIconClicked() {
+    }
 
     override fun createFragment() {
         // Speech.init(context, context?.packageName)
@@ -54,8 +56,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
 
     override fun onResume() {
         super.onResume()
-        requireActivity().sw_location.mshow()
-        requireActivity().tv_gps_status.mshow()
+        requireActivity()?.ll_gps_check?.mshow()
     }
 
     override fun buildFragment() {
@@ -68,7 +69,6 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
         } else {
             Guardian.dialog(context!!, "Alerta", "Seu Dispositivo não possui reconhecimento de voz, por tanto o Aplicativo não irá funcionar corretamente", {}, {}, "Ok").show()
         }
-
         Guardian.requestAppPermissions(this, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION)
 
         //enableAutoStart()
@@ -105,12 +105,16 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
     override fun setupButtons() {
         efab_start_listening.setOnClickListener {
 
+            //AudioFileHelper.startRecordAudio(context!!) {
+            //Helper.LogW("Gravação de Audio Completa Enviando ao Firebase")
+            //  }
+            //  return@setOnClickListener
+
             var ouvindo = Helper.isListening()
             ouvindo = !ouvindo
             if (ouvindo) {
 
                 startListenerButton()
-
                 Helper.setListening(ouvindo)
                 Helper.startService()
 
@@ -118,7 +122,6 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
                 Guardian.dialog(context!!, "", "\n \nDeseja finalizar o Guardian?", {
 
                     stopListenerButton()
-
                     Helper.setListening(false)
                     Helper.stopService()
 
@@ -131,10 +134,14 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
             }
         }
         fab_about_app.setOnClickListener {
+            // AudioFileHelper.stopRecording()
+            //  AudioFileHelper.playAudio(context!!, AudioFileHelper.currentAudio?.absolutePath)
             findNavController().navigate(R.id.action_goto_about_app)
         }
 
         fab_add_command.setOnClickListener {
+            //AudioFileHelper.delete()
+            // AudioFileHelper.playAudio(context!!, AudioFileHelper.currentAudio?.absolutePath)
             findNavController().navigate(R.id.action_goto_new_command)
         }
     }
@@ -154,30 +161,9 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
     }
 
 
-    private fun sendAlert() {
-        //val loc = Gson().toJson(googleLocationHelper.currentLocation)
-        if (AppFireDB.currentAlert == null) {
-            val alert = Alert().apply {
-                count = 1
-                open = true
-                usuarioKey = AppAuth.getUserId()
-            }
-            AppFireDB.insertModel(alert, OnCompleteListener {
-                if (it.isSuccessful) {
-                    AppFireDB.currentAlert = alert
-                    AppFireDB.currentAlert?.firestoreKey = it.result?.id!!
-                } else {
-                    AppFireDB.currentAlert = null
-                }
-            })
-        } else {
-            AppFireDB.updateCurrentAlert()
-        }
-    }
-
-
     override fun onDestroy() {
         Helper.LogE("ON DESTROY")
+        requireActivity()?.ll_gps_check.mhide()
         super.onDestroy()
     }
 

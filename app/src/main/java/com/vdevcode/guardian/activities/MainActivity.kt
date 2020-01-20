@@ -11,6 +11,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.vdevcode.guardian.R
+import com.vdevcode.guardian.extensions.mhide
 import com.vdevcode.guardian.helpers.ConstantHelper
 import com.vdevcode.guardian.helpers.GoogleLocationHelper
 import com.vdevcode.guardian.helpers.Guardian
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
 
         //LocationHelper.checkUserGPS(context!!)
 
+        ll_gps_check.mhide()
         googleLocationHelper.init(this)
         googleLocationHelper.startLocationUpdates(this) // get the locations
         sw_location.setOnCheckedChangeListener { compoundButton, b ->
@@ -48,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                 // desativar GPS
                 //googleLocationHelper.init(this)
                 gps = false
-                Guardian.toast("Desativando caputa de Localização")
+                Guardian.toast("Desativando captura de Localização")
                 googleLocationHelper.stopLocationListener()
             }
         }

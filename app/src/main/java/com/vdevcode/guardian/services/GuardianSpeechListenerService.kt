@@ -24,8 +24,10 @@ import com.vdevcode.guardian.helpers.Helper
 import com.vdevcode.guardian.models.Alert
 import com.vdevcode.guardian.models.Command
 import com.vdevcode.guardian.repo.AppRepo
+import com.vdevcode.guardion.helpers.AudioFileHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
@@ -44,6 +46,7 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
     private var audioManager: AudioManager? = null
     private var myCommands = mutableMapOf<Long, String>()
     private var cont = 0
+    private var recording = false
 
     companion object {
         var serviceOn = false
@@ -119,16 +122,6 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
             ouvindo = false
         } else {
             try {
-                /*GlobalScope.launch(Dispatchers.Main) {
-                if (Speech.getInstance() == null || !Speech.getInstance().isListening) {
-                    Speech.init(this, packageName)
-                    //Speech.getInstance().setLocale(Locale("pt", "BR"))
-                    Speech.getInstance().setListener(this)
-                    Helper.LogE("RE-INIT START")
-                }
-
-                 */
-
                 muteBeep()
                 Speech.getInstance().stopTextToSpeech()
                 Speech.getInstance().startListening(null, this)
@@ -150,7 +143,6 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
         }
     }
 
-
     fun stopListening() {
         try {
             if (Speech.getInstance() != null) {
@@ -162,9 +154,11 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
                 Speech.init(this@GuardianSpeechListenerService)
                 Speech.getInstance().shutdown()
             }
+            Helper.LogW("Pausando Guardian")
         }
         speechOn = false
         ouvindo = false
+
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -216,7 +210,7 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
     override fun onSpecifiedCommandPronounced(event: String?) {
         Helper.LogI("Command : $event")
         cont = 0
-        if (ouvindo && !musicOn) { // loop
+        if (ouvindo && !musicOn && !recording) { // loop
             try {
                 if (Speech.getInstance().isListening) {
                     Speech.getInstance().stopListening()
@@ -246,7 +240,6 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
             }
         }
     }
-
 
     fun restartService(context: Context, boadcast: Boolean) {
         Helper.LogI("Init ALARME")
@@ -297,7 +290,6 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
         super.onDestroy()
     }
 
-
     private fun checkMusicIsOff() {
         cont++
         val music = Helper.checkMusic()
@@ -334,7 +326,7 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
 
         try {
             // if ((speechOn != null && speechOn == false && Helper.isListening()) || cont > 10) {
-            if (cont > 5) {
+            if (cont > 5 && !recording) {
                 Helper.LogE("SPEECH NOT LISTENINF..")
                 cont = 2
                 speechOn = true
@@ -364,7 +356,9 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
     private var timer: Timer? = null
     private val timerTask: TimerTask = object : TimerTask() {
         override fun run() {
-            checkMusicIsOff()
+            if (!recording) {
+                checkMusicIsOff()
+            }
             //checkMicrophoneIsOne()
         }
     }
@@ -412,55 +406,39 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
         return available
     }
 
-
-    private fun checkMicIsAvailable(): Boolean {
-        val mediaRecorder = MediaRecorder()
-        try {
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            mediaRecorder.setOutputFile(File(getCacheDir(), "MediaUtil#micAvailTestFile").getAbsolutePath())
-            //mediaRecorder.setOutputFile(currentAudio.getAbsolutePath());
-            //mediaRecorder.setAudioChannels(AudioFormat.CH);
-            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-            //mediaRecorder.setMaxFileSize(1000000L); // 1 mega pra teste
-            mediaRecorder.prepare();
-            mediaRecorder.start()
-            mediaRecorder.stop()
-            mediaRecorder.release()
-            Helper.LogE("MICROFONE OK");
-            return true
-        } catch (ex: Exception) {
-            Helper.LogE("AUDIO RECORD ERRO")
-            try {
-                mediaRecorder.stop()
-            } catch (e: Exception) {
-                Helper.LogE("AUDIO RECORD ERRO SOP")
-            }
-            mediaRecorder.release()
-        }
-        return true
-    }
-
-
     private fun sendAlert() {
         //val loc = Gson().toJson(googleLocationHelper.currentLocation)
         if (AppFireDB.currentAlert == null) {
             val alert = Alert().apply {
                 count = 1
                 open = true
+                audio = "gravando audio..."
                 usuarioKey = AppAuth.getUserId()
             }
             AppFireDB.insertModel(alert, OnCompleteListener {
                 if (it.isSuccessful) {
                     AppFireDB.currentAlert = alert
                     AppFireDB.currentAlert?.firestoreKey = it.result?.id!!
+                    if (alert.audio.isBlank() || alert.audio.contains("gravan", true)) {
+                        GlobalScope.launch(Dispatchers.Main) {
+                            recording = true
+                            stopListening()
+                            delay(2000)
+                            Helper.LogW("Iniciando Gravação de Audio")
+                            AudioFileHelper.startRecordAudio(this@GuardianSpeechListenerService) {
+                                recording = false
+                                Helper.LogW("Gravação de Audio Completa Enviando ao Firebase")
+                            }
+                        }
+                    }
                 } else {
                     AppFireDB.currentAlert = null
                 }
             })
         } else {
-            AppFireDB.updateCurrentAlert()
+            AppFireDB.updateCurrentAlert(null)
         }
+
     }
 
 

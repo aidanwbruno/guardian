@@ -32,6 +32,7 @@ abstract class BaseFragment(@NotNull protected var viewId: Int, @NotNull protect
 
     // Add all parts/methods  for this fragments
     protected abstract fun buildFragment()
+    protected abstract fun homeIconClicked()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         createFragment()
@@ -46,7 +47,7 @@ abstract class BaseFragment(@NotNull protected var viewId: Int, @NotNull protect
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> findNavController().popBackStack()
+            android.R.id.home -> homeIconClicked()
         }
         return super.onOptionsItemSelected(item)
     }

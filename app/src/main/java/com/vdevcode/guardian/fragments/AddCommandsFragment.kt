@@ -32,6 +32,10 @@ class AddCommandsFragment : BaseFragment(R.layout.fragment_add_commands, "Meus C
     override fun createFragment() {
     }
 
+    override fun homeIconClicked() {
+        findNavController().popBackStack()
+    }
+
     //Called on OncreatedView
     override fun buildFragment() {
         super.setupReciclerView(rv_command_list, CommandAdapter(context!!, mutableListOf()), LinearLayoutManager(context!!))
@@ -39,8 +43,7 @@ class AddCommandsFragment : BaseFragment(R.layout.fragment_add_commands, "Meus C
         super.addObserver(appViewModel.all as LiveData<MutableList<BaseModel>>, true)
         //updateAddedWordList()
         setupButtons()
-        requireActivity().sw_location.mhide()
-        requireActivity().tv_gps_status.mhide()
+        requireActivity().ll_gps_check.mhide()
     }
 
 
@@ -77,7 +80,8 @@ class AddCommandsFragment : BaseFragment(R.layout.fragment_add_commands, "Meus C
         }
 
         tiet_command_name?.text?.let {
-            val words = it.split(" ")
+            val normal = Helper.normalizeText(it.toString())
+            val words = normal.split(" ")
             if (it.length <= 2 || words.size > 3) {
                 Guardian.toast("O tamanho do Commando deve ter no maxímo 3 palavras!")
                 return false

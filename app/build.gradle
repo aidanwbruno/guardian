@@ -95,6 +95,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:19.1.0'
     implementation 'com.google.firebase:firebase-firestore:21.2.1'
     implementation 'com.google.firebase:firebase-analytics:17.2.1'
+    implementation 'com.google.firebase:firebase-storage:19.1.0'
 
     // location play services
     implementation 'com.google.android.gms:play-services-location:17.0.0'

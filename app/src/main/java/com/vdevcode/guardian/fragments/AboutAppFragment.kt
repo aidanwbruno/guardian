@@ -20,6 +20,10 @@ import kotlinx.coroutines.launch
  */
 class AboutAppFragment : BaseFragment(R.layout.fragment_about_app, "Sobre o Guardian", true, null) {
 
+    override fun homeIconClicked() {
+        findNavController().popBackStack()
+    }
+
     override fun buildFragment() {
     }
 

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.vdevcode.guardian.R
+import com.vdevcode.guardian.auth.AppAuth
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -20,11 +21,18 @@ class SplashFragment : BaseFragment(R.layout.fragment_splash, "Login", false, nu
     override fun buildFragment() {
     }
 
+    override fun homeIconClicked() {
+    }
+
     override fun onResume() {
         super.onResume()
         GlobalScope.launch {
             delay(2000)
-            findNavController().navigate(R.id.action_goto_login)
+            if (AppAuth.isUserLogged()) {
+                findNavController().navigate(R.id.action_global_main)
+            } else {
+                findNavController().navigate(R.id.action_goto_login)
+            }
         }
     }
 }

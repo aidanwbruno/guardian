@@ -16,12 +16,14 @@ class Alert(var usuarioKey: String) : BaseModel() {
 
     var open: Boolean
     var count: Int
+    var audio: String
 
     constructor() : this(AppAuth.getUserId()) {}
 
     init {
         open = false
         count = 0
+        audio = ""
         collectionName = ConstantHelper.FIREBASE_ALERT_COLLECTION_NAME
     }
 

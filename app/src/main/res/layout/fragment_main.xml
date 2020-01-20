@@ -10,76 +10,88 @@
 
     <include layout="@layout/simple_toolbar" />
 
-    <ImageView
-        android:id="@+id/iv_main_logo"
-        android:layout_width="200dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="?actionBarSize"
-        android:scaleType="fitEnd"
-        android:src="@drawable/app_logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_main_appname"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_height="0dp"
         android:gravity="center"
-        android:text="Guardian APP"
-        android:textAllCaps="true"
-        android:textColor="@color/colorAccent"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/iv_main_logo" />
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/fab_add_command"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/tv_more_security"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:text="Você mais Seguro"
-        android:textAllCaps="true"
-        android:textColor="@color/text_color"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/tv_main_appname" />
+        <ImageView
+            android:id="@+id/iv_main_logo"
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:scaleType="fitEnd"
+            android:src="@drawable/app_logo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_main_appname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="Guardian APP"
+            android:textAllCaps="true"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/iv_main_logo" />
+
+        <TextView
+            android:id="@+id/tv_more_security"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="Você mais Seguro"
+            android:textAllCaps="true"
+            android:textColor="@color/text_color"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/tv_main_appname" />
 
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/efab_start_listening"
-        style="@style/Widget.MaterialComponents.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:foregroundGravity="top"
-        android:src="@drawable/ic_audio_off"
-        android:textColor="#fff"
-        app:backgroundTint="@android:color/holo_red_dark"
-        app:fabCustomSize="150dp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_guardian_status"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_more_security"
-        app:maxImageSize="50dp"
-        app:tint="@android:color/white" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/efab_start_listening"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:foregroundGravity="top"
+            android:src="@drawable/ic_audio_off"
+            android:textColor="#fff"
+            app:backgroundTint="@android:color/holo_red_dark"
+            app:fabCustomSize="130dp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_guardian_status"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_more_security"
+            app:maxImageSize="50dp"
+            app:tint="@android:color/white" />
 
 
-    <TextView
-        android:id="@+id/tv_guardian_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Guardian DESATIVADO"
-        android:textAllCaps="true"
-        android:textColor="@color/colorAccent"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/fab_about_app"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/efab_start_listening" />
+        <TextView
+            android:id="@+id/tv_guardian_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:gravity="center"
+            android:text="Guardian DESATIVADO"
+            android:textAllCaps="true"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/fab_about_app"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/efab_start_listening" />
+
+
+    </LinearLayout>
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -90,6 +102,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:backgroundTint="@android:color/holo_blue_dark"
+        app:elevation="6dp"
         android:gravity="center"
         android:src="@android:drawable/ic_menu_help"
         app:fabCustomSize="30dp"
@@ -104,15 +117,25 @@
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
+        android:layout_margin="8dp"
         android:backgroundTint="@android:color/holo_green_dark"
         android:gravity="center"
         android:src="@drawable/ic_add"
         app:elevation="6dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tv_add_comm"
+        app:layout_constraintEnd_toEndOf="@id/tv_add_comm"
+        app:layout_constraintStart_toStartOf="@id/tv_add_comm"
         app:tint="#fff" />
+
+    <TextView
+        android:id="@+id/tv_add_comm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Add Comando"
+        android:textColor="#fff"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

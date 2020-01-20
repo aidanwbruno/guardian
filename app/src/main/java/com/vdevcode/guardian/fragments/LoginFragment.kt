@@ -13,6 +13,9 @@ import kotlinx.android.synthetic.main.fragment_login.*
  */
 class LoginFragment : BaseFragment(R.layout.fragment_login, "Guardian Login", false, null) {
 
+    override fun homeIconClicked() {
+    }
+
     override fun buildFragment() {
         setupButtons()
     }

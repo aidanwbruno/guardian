@@ -11,6 +11,8 @@ import com.vdevcode.guardian.helpers.ConstantHelper
 import com.vdevcode.guardian.helpers.Helper
 import com.vdevcode.guardian.models.Alert
 import com.vdevcode.guardian.models.BaseModel
+import com.vdevcode.guardion.helpers.AudioFileHelper
+import com.vdevcode.guardion.helpers.FileHelper
 
 /**
  * Class used  to perform Firestore operations
@@ -20,7 +22,7 @@ object AppFireDB {
 
     var currentAlert: Alert? = null
 
-    fun updateCurrentAlert() {
+    fun updateCurrentAlert(audioUrl: String?) {
         currentAlert?.let { alertDoc ->
             if (alertDoc.open) {
                 findDocumentById(alertDoc).get().addOnCompleteListener { ref ->
@@ -29,11 +31,20 @@ object AppFireDB {
                         alert?.let {
                             alert.firestoreKey = ref.result?.id!!
                             if (alert.open) {
-                                DB().collection(alertDoc.collectionName).document(alertDoc.firestoreKey).update(
-                                    mapOf("count" to FieldValue.increment(1))
-                                ).addOnCompleteListener {
+                                val params = mutableMapOf<String, Any>()
+                                params.put("count", FieldValue.increment(1))
+                                if (AudioFileHelper.isFileOk()) {
+                                    audioUrl?.let {
+                                        Helper.LogI("Audio OK")
+                                        params.put("audio", FileHelper.getFileName(it))
+                                    }
+                                }
+                                DB().collection(alertDoc.collectionName).document(alertDoc.firestoreKey).update(params).addOnCompleteListener {
                                     if (it.isSuccessful) {
                                         Helper.LogI("Alerta Atualizado")
+                                        if (AudioFileHelper.isFileOk()) {
+                                            AudioFileHelper.delete()
+                                        }
                                     } else {
                                         if (it.exception != null) {
                                             Helper.LogI("Erro ao atualizar alerta: ${it.exception?.message}")

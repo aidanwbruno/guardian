@@ -38,6 +38,10 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
         }
     }
 
+    override fun homeIconClicked() {
+        findNavController().popBackStack()
+    }
+
     override fun buildFragment() {
         setupButtons()
     }

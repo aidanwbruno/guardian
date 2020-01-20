@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-files-path name="my_speechs" path="." />
-    <external-path name="my_speechs" path="." />
-    <files-path name="my_speechs" path="speech" />
+    <external-files-path
+        name="my_audios"
+        path="." />
+    <external-path
+        name="my_audios"
+        path="." />
+    <files-path
+        name="my_audios"
+        path="." />
     <!--
         <external-files-path name="Imagens" path="Imagens" />
         <external-files-path name="Videos"  path="Android/data/com.gentebonita.store.gentebonita.gentebonita/files/Videos" />
