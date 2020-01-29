@@ -27,6 +27,7 @@ class AppUser(
     @get:Exclude
     var password: String, // only for login
     var nascimento: String,
+    var complemento: String,
 
     // ======= endereço
 
@@ -36,20 +37,21 @@ class AppUser(
     var bairro: String,
     var cidade: String,
     var estado: String,
-
     var motorista: Boolean?,
     @Ignore
     var CARROS: MutableMap<String, Car>? = mutableMapOf()
 
 ) : BaseModel() {
 
-    @Ignore
-    var LOCATIONS: MutableMap<String, String>? = mutableMapOf()
+    //@Ignore
+    // var LOCATIONS: MutableMap<String, String>? = mutableMapOf()
+    var ultimaLocalizacao: String
 
-    constructor() : this(0, "", "", "", "", "", "", "", "", "", "", "", null, mutableMapOf()) {}
+    constructor() : this(0, "", "", "", "", "", "", "", "", "", "", "", "", null, mutableMapOf()) {}
 
     init {
         collectionName = ConstantHelper.FIREBASE_USER_COLLECTION_NAME
+        ultimaLocalizacao = ""
     }
 
 

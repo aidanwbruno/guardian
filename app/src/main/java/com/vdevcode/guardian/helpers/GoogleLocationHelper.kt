@@ -27,11 +27,12 @@ import com.vdevcode.guardian.auth.AppAuth
 import com.vdevcode.guardian.database.AppFireDB
 import com.vdevcode.guardian.models.Alert
 import java.util.*
+import kotlin.math.min
 
 
-const val LOCATION_UPADATE_INTERVAL = 60000L // 10 secounds
+const val LOCATION_UPADATE_INTERVAL = 60000L // 1 min
 const val FAST_LOCATION_UPADATE_INTERVAL = 30000L // 5 secounds
-const val REQUEST_CHECK_SETTINGS = 383 // 5 secounds
+const val REQUEST_CHECK_SETTINGS = 383 // req code
 
 class GoogleLocationHelper {
 
@@ -41,6 +42,11 @@ class GoogleLocationHelper {
     var locationRequest: LocationRequest? = null
     var locationCallback: LocationCallback? = null
     var currentLocation: UserLocation? = null
+
+
+    var gpsEnable = false
+    var netWorkEnable = false
+    var myLocation = UserLocation()
 
 
     fun init(context: Context) {
@@ -123,21 +129,24 @@ class GoogleLocationHelper {
                     Helper.LogW("Location Change")
                     val locationString = currentLocation?.toJson()
                     locationString?.let { loc ->
+                        // update user last location
+                        updateMyCurrentLocation(loc, false)
+                        // update with alert
                         AppFireDB.currentAlert?.let { alert ->
                             AppFireDB.findDocumentById(alert).get().addOnCompleteListener { ref ->
                                 if (ref.isSuccessful) {
                                     val alertDoc = ref.result?.toObject(Alert::class.java)
                                     if (alertDoc != null && alertDoc.open) {
-
                                         // update user location
                                         AppFireDB.findUserById(AppAuth.getUserId()).collection(ConstantHelper.FIREBASE_USER_LOCATIONS_COLLECTION_NAME).document(Calendar.getInstance().timeInMillis.toString()).set(mapOf("point" to loc)).addOnCompleteListener {
                                             if (it.isSuccessful) {
                                                 Helper.LogW("Location added to user")
                                                 Helper.LogW("Location :  LAT: ${currentLocation?.latitude} , LNG: ${currentLocation?.longitude}")
                                                 Guardian.toast("Location (${currentLocation?.latitude}, ${currentLocation?.longitude})")
+                                                updateMyCurrentLocation(loc, true)
                                             }
                                         }
-
+                                        AppFireDB.findDocumentById(alert).update(mapOf("ultimaLocalizacao" to loc))
                                     } else {
                                         AppFireDB.currentAlert = null // alert was closed
                                     }
@@ -151,12 +160,6 @@ class GoogleLocationHelper {
             }
         }
     }
-
-
-    var gpsEnable = false
-    var netWorkEnable = false
-    var myLocation = UserLocation()
-
 
     @SuppressLint("MissingPermission")
     fun getLocationManager(context: Context) = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -217,6 +220,17 @@ class GoogleLocationHelper {
                     }
 
             }
+        }
+    }
+
+    private fun updateMyCurrentLocation(location: String, alert: Boolean) {
+        if (alert) {
+            val minute = Calendar.getInstance().get(Calendar.MINUTE) ?: 0
+            if (minute > 0 && minute % 5 == 0) {
+                AppFireDB.findUserById(AppAuth.getUserId()).update(mapOf("ultimaLocalizacao" to location))
+            }
+        } else {
+            AppFireDB.findUserById(AppAuth.getUserId()).update(mapOf("ultimaLocalizacao" to location))
         }
     }
 

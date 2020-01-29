@@ -95,6 +95,7 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
         bairro = et_newuser_bairro.text.toString()
         cidade = et_newuser_city.text.toString()
         estado = et_newuser_uf.text.toString()
+        complemento = et_newuser_complemento.text.toString()
     }
 
 
@@ -128,7 +129,7 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
                 til_user_bairro.ok(et_newuser_bairro, "Bairro") &&
                 til_user_city.ok(et_newuser_city, "Cidade") &&
                 til_user_uf.ok(et_newuser_uf, "Estado") &&
-                til_user_complemento.ok(et_newuser_uf, "Complemento")
+                til_user_complemento.ok(et_newuser_complemento, "Complemento")
         val pass = et_newuser_pass.text.toString()
         val checkPass = et_newuser_checkpass.text.toString()
 
