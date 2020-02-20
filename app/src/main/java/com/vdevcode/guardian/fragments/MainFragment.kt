@@ -24,12 +24,14 @@ import com.vdevcode.guardian.extensions.mhide
 import com.vdevcode.guardian.extensions.mshow
 import com.vdevcode.guardian.helpers.*
 import com.vdevcode.guardian.models.Alert
+import com.vdevcode.guardian.repo.AppRepo
 import com.vdevcode.guardion.helpers.AudioFileHelper
 import com.vdevcode.guardion.helpers.FileHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
@@ -105,6 +107,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
     override fun setupButtons() {
         efab_start_listening.setOnClickListener {
 
+
             //AudioFileHelper.startRecordAudio(context!!) {
             //Helper.LogW("Gravação de Audio Completa Enviando ao Firebase")
             //  }
@@ -113,11 +116,20 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
             var ouvindo = Helper.isListening()
             ouvindo = !ouvindo
             if (ouvindo) {
-
-                startListenerButton()
-                Helper.setListening(ouvindo)
-                Helper.startService()
-
+                GlobalScope.launch(Dispatchers.IO) {
+                    val has = async { AppRepo.getAllCommands() }.await()
+                    if (has.isNullOrEmpty()) {
+                        GlobalScope.launch(Dispatchers.Main) {
+                            Guardian.toast("Voce não cadastrou nenhum comando")
+                        }
+                    } else {
+                        GlobalScope.launch(Dispatchers.Main) {
+                            startListenerButton()
+                            Helper.setListening(ouvindo)
+                            Helper.startService()
+                        }
+                    }
+                }
             } else {
                 Guardian.dialog(context!!, "", "\n \nDeseja finalizar o Guardian?", {
 
@@ -131,7 +143,9 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
                     //startListening() // keep listening
                 }, "Finalizar", "não").show()
 
+
             }
+
         }
         fab_about_app.setOnClickListener {
             // AudioFileHelper.stopRecording()
