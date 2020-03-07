@@ -19,7 +19,7 @@ import kotlinx.android.parcel.Parcelize
 class AppUser(
 
     @PrimaryKey(autoGenerate = true)
-    @get:Exclude
+    @get:Exclude @set:Exclude @Exclude
     var userId: Int,
     var name: String,
     var email: String,
@@ -28,6 +28,7 @@ class AppUser(
     var password: String, // only for login
     var nascimento: String,
     var complemento: String,
+    var ativo: Boolean,
 
     // ======= endereço
 
@@ -47,7 +48,7 @@ class AppUser(
     // var LOCATIONS: MutableMap<String, String>? = mutableMapOf()
     var ultimaLocalizacao: String
 
-    constructor() : this(0, "", "", "", "", "", "", "", "", "", "", "", "", null, mutableMapOf()) {}
+    constructor() : this(0, "", "", "", "", "", "", true, "", "", "", "", "", "", null, mutableMapOf()) {}
 
     init {
         collectionName = ConstantHelper.FIREBASE_USER_COLLECTION_NAME

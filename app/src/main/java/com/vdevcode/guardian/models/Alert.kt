@@ -18,6 +18,7 @@ class Alert(var usuarioKey: String) : BaseModel() {
     var count: Int
     var audio: String
     var ultimaLocalizacao: String
+    var obs: String
 
     constructor() : this(AppAuth.getUserId()) {}
 
@@ -26,6 +27,7 @@ class Alert(var usuarioKey: String) : BaseModel() {
         count = 0
         audio = ""
         ultimaLocalizacao = ""
+        obs = ""
         collectionName = ConstantHelper.FIREBASE_ALERT_COLLECTION_NAME
     }
 

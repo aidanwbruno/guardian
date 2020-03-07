@@ -22,7 +22,7 @@
 -keepattributes Signature
 -keepattributes *Annotation*
 
--keepclassmembers class com.vdevcode.vocc.models.** {
+-keepclassmembers class com.vdevcode.guardian.models.** {
   *;
 }
 

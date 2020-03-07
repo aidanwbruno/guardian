@@ -30,6 +30,8 @@ object AppRepo {
         }
     }
 
+    // repo
+
     fun update(model: BaseModel) {
         val dao = getDAO(model)
         dao.update(model)

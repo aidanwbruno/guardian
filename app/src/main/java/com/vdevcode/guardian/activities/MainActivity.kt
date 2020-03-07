@@ -1,6 +1,7 @@
 package com.vdevcode.guardian.activities
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
@@ -8,8 +9,12 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.vdevcode.guardian.R
 import com.vdevcode.guardian.extensions.mhide
 import com.vdevcode.guardian.helpers.ConstantHelper
@@ -23,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     private val googleLocationHelper = GoogleLocationHelper()
     private var gps: Boolean? = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,8 +61,28 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Creates instance of the manager.
+        checkUpdate()
     }
 
+    private fun checkUpdate() {
+        val appUpdateManager = AppUpdateManagerFactory.create(this)
+        // Checks that the platform will allow the specified type of update.
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
+                appUpdateManager.startUpdateFlowForResult(
+                    // Pass the intent that is returned by 'getAppUpdateInfo()'.
+                    appUpdateInfo,
+                    // Or 'AppUpdateType.FLEXIBLE' for flexible updates.
+                    AppUpdateType.IMMEDIATE,
+                    // The current activity making the update request.
+                    this,
+                    // Include a request code to later monitor this update request.
+                    12
+                )
+            }
+        }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -64,12 +90,19 @@ class MainActivity : AppCompatActivity() {
             gps = googleLocationHelper.gpsOk(this)
             sw_location.isChecked = it
         }
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         gps = googleLocationHelper.checkFixResult(requestCode, resultCode)
         sw_location.isChecked = gps ?: false
+
+        if (requestCode == 12 && resultCode == Activity.RESULT_OK) {
+            Guardian.toast("App Atualizado com sucesso")
+        }
+
     }
 
 

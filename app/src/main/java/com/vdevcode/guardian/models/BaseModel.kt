@@ -11,10 +11,10 @@ abstract class BaseModel : Parcelable {
     var createdAt = Calendar.getInstance().timeInMillis// = Calendar.getInstance().timeInMillis
     var updatedAt = Calendar.getInstance().timeInMillis// = Calendar.getInstance().timeInMillis
     @Ignore
-    @get:Exclude
+    @get:Exclude @set:Exclude @Exclude
     var collectionName = ""
 
     @Ignore
-    @get:Exclude
+    @get:Exclude @set:Exclude @Exclude
     var firestoreKey = ""
 }
