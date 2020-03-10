@@ -24,6 +24,7 @@ import com.vdevcode.guardian.helpers.Helper
 import com.vdevcode.guardian.services.JobSchedulerRestartSpeechService
 import kotlinx.android.synthetic.main.activity_main.*
 
+//vdev.code@guardian@2020
 class MainActivity : AppCompatActivity() {
 
     private val googleLocationHelper = GoogleLocationHelper()

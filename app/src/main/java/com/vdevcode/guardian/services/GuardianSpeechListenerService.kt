@@ -46,7 +46,9 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
     private var audioManager: AudioManager? = null
     private var myCommands = mutableMapOf<Long, String>()
     private var cont = 0
+    private var micOFFcont = 0
     private var recording = false
+
 
     companion object {
         var serviceOn = false
@@ -116,11 +118,13 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
     fun startListening() {
         // check microphone is
         val micOk = checkMicrophoneIsAvailable()
-        if (!micOk) {
+        if (!micOk && 2 == 3) { // disable
             micriphoneOn = true
             speechOn = false
             ouvindo = false
+            micOFFcont++
         } else {
+            micOFFcont = 0
             try {
                 muteBeep()
                 Speech.getInstance().stopTextToSpeech()
@@ -331,7 +335,6 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
                 cont = 2
                 speechOn = true
                 runSpeechListener()
-
                 // startListening()
             }
 

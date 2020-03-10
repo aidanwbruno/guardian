@@ -157,9 +157,7 @@ object Helper {
             return
         val conn = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val netReqBuilder = NetworkRequest.Builder()
-        conn.registerNetworkCallback(
-            netReqBuilder.build(),
-            object : ConnectivityManager.NetworkCallback() {
+        conn.registerNetworkCallback(netReqBuilder.build(), object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network?) {
                     Guardian.online = true
                     if (isListening())
@@ -175,7 +173,7 @@ object Helper {
                 }
 
                 override fun onLosing(network: Network?, maxMsToLive: Int) {
-                    Guardian.toast("Você está offline :( verifique sua conexão")
+                   // Guardian.toast("Você está offline :( verifique sua conexão")
                 }
 
                 override fun onUnavailable() {

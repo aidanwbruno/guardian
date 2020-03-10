@@ -24,7 +24,7 @@ class AppUser(
     var name: String,
     var email: String,
     var cpf: String,
-    @get:Exclude
+    @get:Exclude @set:Exclude @Exclude
     var password: String, // only for login
     var nascimento: String,
     var complemento: String,
@@ -40,7 +40,7 @@ class AppUser(
     var estado: String,
     var motorista: Boolean?,
     @Ignore
-    var CARROS: MutableMap<String, Car>? = mutableMapOf()
+    var carros: MutableMap<String, Car>? = mutableMapOf()
 
 ) : BaseModel() {
 

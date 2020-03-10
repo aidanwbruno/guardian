@@ -98,6 +98,11 @@ object AppAuth {
 
     fun getUserId(): String {
         getUser()?.let {
+            it?.email?.let {
+                if(it.isNotBlank()){
+                    return  it
+                }
+            }
             return it.uid
         }
         return ""

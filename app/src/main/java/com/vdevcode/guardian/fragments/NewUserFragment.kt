@@ -1,19 +1,13 @@
 package com.vdevcode.guardian.fragments
 
 
-import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.vdevcode.guardian.R
 import com.vdevcode.guardian.auth.AppAuth
-import com.vdevcode.guardian.database.AppFireDB
 import com.vdevcode.guardian.extensions.mhide
 import com.vdevcode.guardian.extensions.mshow
 import com.vdevcode.guardian.helpers.Guardian
@@ -49,7 +43,7 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
     override fun setupButtons() {
         fab_save_user.setOnClickListener {
             if (validate()) {
-                if (ll_has_car.visible() && user.CARROS.isNullOrEmpty()) {
+                if (ll_has_car.visible() && user.carros.isNullOrEmpty()) {
                     Guardian.dialog(context!!, "Atenção", "Você, abriu os campos de cadastro de veículo, deseja adicionar algum, antes de finalizar?", {
                         it.dismiss()
                     }, {
@@ -110,9 +104,9 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
         bairro = "bairro do miguel"
         cidade = "cidade do miguel"
         estado = "estado do miguel"
-        CARROS?.put("carrro1111", Car("CHEVROLET ", "Camaro", "preta", "xxx-xxXX"))
+        carros?.put("carrro1111", Car("CHEVROLET ", "Camaro", "preta", "xxx-xxXX"))
         if (et_newuser_marca.text.toString().isNotBlank()) {
-            CARROS?.put("carrro1111", Car("CHEVROLET ", "Camaro", "preta", "xxx-xxXX"))
+            carros?.put("carrro1111", Car("CHEVROLET ", "Camaro", "preta", "xxx-xxXX"))
         }
     }
 
@@ -172,7 +166,7 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
         if (et_newuser_cor.text.toString().isNotBlank()) {
             car.placa = et_newuser_cor.text.toString()
         }
-        user.CARROS?.put(car.marca.plus(car.modelo), car)
+        user.carros?.put(car.marca.plus(car.modelo), car)
         carList += "Carrro: ${car.marca}, ${car.modelo}, ${car.cor}, placa: ${car.placa} \n"
         tv_mycars_list.text = carList
         Guardian.snack(view!!, "Carro adicionado")
