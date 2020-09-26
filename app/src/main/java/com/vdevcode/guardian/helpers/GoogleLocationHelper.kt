@@ -47,6 +47,7 @@ class GoogleLocationHelper {
     var gpsEnable = false
     var netWorkEnable = false
     var myLocation = UserLocation()
+    var locationOk: Boolean? = null
 
 
     fun init(context: Context) {
@@ -66,6 +67,7 @@ class GoogleLocationHelper {
     }
 
 
+    @SuppressLint("MissingPermission")
     fun startLocationUpdates(context: Activity?) {
         locationSettingsClient?.let {
             val task = it.checkLocationSettings(locationSettingsReq)
@@ -109,6 +111,9 @@ class GoogleLocationHelper {
             // Show the dialog by calling startResolutionForResult(),
             // and check the result in onActivityResult().
             resolvable.startResolutionForResult(context, REQUEST_CHECK_SETTINGS)
+            Guardian.dialog(context, "Captura de Localização", "Se o seu GPS foi ativado, você pode ativa a captura da sua localização, para monitoramento do Guardian, Deseja Ativar?", {
+                startLocationUpdates(context)
+            }, {}, "Ativar", "Não").show()
         } catch (e: SendIntentException) {
             // Ignore the error.
         } catch (e: ClassCastException) {
@@ -126,6 +131,7 @@ class GoogleLocationHelper {
                         longitude = it.longitude
                         latitude = it.latitude
                     }
+                    locationOk = true
                     Helper.LogW("Location Change")
                     val locationString = currentLocation?.toJson()
                     locationString?.let { loc ->
@@ -186,7 +192,7 @@ class GoogleLocationHelper {
 
     fun gpsOk(context: Context): Boolean {
         val manager = getLocationManager(context)
-        return manager.isProviderEnabled(LocationManager.GPS_PROVIDER) || manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        return (manager.isProviderEnabled(LocationManager.GPS_PROVIDER) || manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) && locationOk == true
     }
 
     @SuppressLint("MissingPermission")
@@ -217,8 +223,8 @@ class GoogleLocationHelper {
                 removeLocationUpdates(it)
                     .addOnCompleteListener {
                         Helper.LogW("Parando de receber localizações")
+                        locationOk = false
                     }
-
             }
         }
     }

@@ -1,16 +1,19 @@
 package com.vdevcode.guardian.services
 
 
-import android.app.*
+import android.app.AlarmManager
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioRecord
 import android.media.MediaRecorder
-import android.os.Build
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.IBinder
-import androidx.core.app.NotificationCompat
 import com.google.android.gms.tasks.OnCompleteListener
 import com.sac.speech.GoogleVoiceTypingDisabledException
 import com.sac.speech.Speech
@@ -18,7 +21,7 @@ import com.sac.speech.SpeechDelegate
 import com.sac.speech.SpeechRecognitionNotAvailable
 import com.vdevcode.guardian.auth.AppAuth
 import com.vdevcode.guardian.database.AppFireDB
-import com.vdevcode.guardian.helpers.GoogleLocationHelper
+import com.vdevcode.guardian.fragments.MainFragment
 import com.vdevcode.guardian.helpers.Guardian
 import com.vdevcode.guardian.helpers.Helper
 import com.vdevcode.guardian.models.Alert
@@ -29,7 +32,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
 import java.util.*
 
 
@@ -52,6 +54,7 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
 
     companion object {
         var serviceOn = false
+        var ended = false
     }
 
     override fun onCreate() {
@@ -125,24 +128,28 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
             micOFFcont++
         } else {
             micOFFcont = 0
-            try {
+            if (Speech.getInstance().isListening) {
+                Speech.getInstance().stopListening();
                 muteBeep()
-                Speech.getInstance().stopTextToSpeech()
-                Speech.getInstance().startListening(null, this)
+            } else {
+                try {
+                    Speech.getInstance().stopTextToSpeech()
+                    Speech.getInstance().startListening(null, this)
+                    speechOn = true
+                    ouvindo = true
+                    // }
+                } catch (ex: SpeechRecognitionNotAvailable) {
+                    Helper.LogE("Speech not Available")
+                    speechOn = false
+                    ouvindo = false
+                } catch (go: GoogleVoiceTypingDisabledException) {
+                    Helper.LogE("Google Typing error")
+                } catch (ex: Exception) {
+                    Helper.LogE("start exxx")
+                    speechOn = false
+                    ouvindo = false
+                }
                 muteBeep()
-                speechOn = true
-                ouvindo = true
-                // }
-            } catch (ex: SpeechRecognitionNotAvailable) {
-                Helper.LogE("Speech not Available")
-                speechOn = false
-                ouvindo = false
-            } catch (go: GoogleVoiceTypingDisabledException) {
-                Helper.LogE("Google Typing error")
-            } catch (ex: Exception) {
-                Helper.LogE("start exxx")
-                speechOn = false
-                ouvindo = false
             }
         }
     }
@@ -212,23 +219,31 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
     }
 
     override fun onSpecifiedCommandPronounced(event: String?) {
+        try {
+
+            (Objects.requireNonNull(getSystemService(AUDIO_SERVICE)) as AudioManager).adjustStreamVolume(AudioManager.STREAM_SYSTEM, AudioManager.ADJUST_MUTE, 0)
+
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+
         Helper.LogI("Command : $event")
         cont = 0
-        if (ouvindo && !musicOn && !recording) { // loop
+        if (ouvindo && !musicOn && !recording && !MainFragment.ended) { // loop
             try {
                 if (Speech.getInstance().isListening) {
+                    muteBeep()
                     Speech.getInstance().stopListening()
                     Helper.LogE("UM MUTE")
                     speechOn = false
                     //unmuteBeep()
                 } else {
-                    muteBeep()
+
                     Speech.getInstance().stopTextToSpeech()
                     Speech.getInstance().startListening(null, speechDelegate)
                     //startListening()
                     speechOn = true
                     ouvindo = true
-                    muteBeep()
                 }
             } catch (ex: SpeechRecognitionNotAvailable) {
                 Helper.LogE("Command - Speech not Available")
@@ -242,6 +257,7 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
                 ouvindo = false
                 ex.printStackTrace()
             }
+            muteBeep()
         }
     }
 

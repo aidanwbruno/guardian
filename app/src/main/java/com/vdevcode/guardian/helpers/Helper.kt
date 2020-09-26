@@ -3,25 +3,15 @@ package com.vdevcode.guardian.helpers
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.vdevcode.guardian.R
-import com.vdevcode.guardian.models.Command
-import com.vdevcode.guardian.repo.AppRepo
-import com.vdevcode.guardian.services.AndroidSpeechService
 import com.vdevcode.guardian.services.GuardianSpeechListenerService
-import com.vdevcode.guardian.services.RestarVoZService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.text.Normalizer
 
 

@@ -43,14 +43,14 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/textStatus"
+            android:id="@+id/tv_site_link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="20dp"
             android:gravity="center"
-            android:text="PARA MAIS INFORMAÇÕES CONSULTE NOSSO SITE www.ddddd.com.br"
+            android:text="PARA MAIS INFORMAÇÕES CONSULTE NOSSO SITE https://sosguardian.app"
             android:textColor="@color/colorAccent"
             android:textSize="16sp"
             android:textStyle="bold" />

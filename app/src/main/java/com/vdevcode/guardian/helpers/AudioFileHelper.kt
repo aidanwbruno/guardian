@@ -60,7 +60,7 @@ object AudioFileHelper {
                     // mediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
                     mediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
                     mediaRecorder?.setOutputFile(currentAudio?.absolutePath)
-                    mediaRecorder?.setMaxDuration(300000)
+                    mediaRecorder?.setMaxDuration(200000)
                     mediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
                     //mediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
                     mediaRecorder?.setMaxFileSize(1000000L) // 1 mega pra teste

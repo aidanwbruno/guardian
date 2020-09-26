@@ -46,19 +46,34 @@ class MainActivity : AppCompatActivity() {
         ll_gps_check.mhide()
         googleLocationHelper.init(this)
         googleLocationHelper.startLocationUpdates(this) // get the locations
+
+        gps?.let {
+            // if (googleLocationHelper.locationOk == null && currentFocus?.id == R.id.main_frag ) {
+            // sw_location.isChecked = true
+            //  googleLocationHelper.startLocationUpdates(this) // get the locations
+            // } else {
+            gps = googleLocationHelper.gpsOk(this)
+            sw_location.isChecked = it
+            //}
+        }
+
         sw_location.setOnCheckedChangeListener { compoundButton, b ->
             if (b) {
                 // Ativar GPS
                 //googleLocationHelper.init(this)
-                gps = true
-                Guardian.toast("Ativando Localização")
-                googleLocationHelper.startLocationUpdates(this) // get the locations
+                if (googleLocationHelper.locationOk == null || googleLocationHelper.locationOk == false) {
+                    gps = true
+                    Guardian.toast("Ativando Localização")
+                    googleLocationHelper.startLocationUpdates(this) // get the locations
+                }
             } else {
-                // desativar GPS
-                //googleLocationHelper.init(this)
-                gps = false
-                Guardian.toast("Desativando captura de Localização")
-                googleLocationHelper.stopLocationListener()
+                if (googleLocationHelper.locationOk == true) {
+                    // desativar GPS
+                    //googleLocationHelper.init(this)
+                    gps = false
+                    Guardian.toast("Desativando captura de Localização")
+                    googleLocationHelper.stopLocationListener()
+                }
             }
         }
 
@@ -87,12 +102,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        gps?.let {
-            gps = googleLocationHelper.gpsOk(this)
-            sw_location.isChecked = it
-        }
-
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

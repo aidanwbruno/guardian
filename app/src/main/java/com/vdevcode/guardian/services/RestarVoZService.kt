@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.media.AudioManager
 import androidx.core.content.ContextCompat
+import com.vdevcode.guardian.fragments.MainFragment
 import com.vdevcode.guardian.helpers.Guardian
 import com.vdevcode.guardian.helpers.Helper
 
@@ -16,7 +17,7 @@ class RestarVoZService : BroadcastReceiver() {
         intent?.action?.let {
             when (it) {
                 "com.vdevcode.RESTART_SERVICE" -> {
-                    if (!GuardianSpeechListenerService.serviceOn && Helper.isListening()) {
+                    if (!GuardianSpeechListenerService.serviceOn && Helper.isListening() && !MainFragment.ended) {
                         ContextCompat.startForegroundService(Guardian.appContext!!, Intent(context, GuardianSpeechListenerService::class.java))
                     }
                 }

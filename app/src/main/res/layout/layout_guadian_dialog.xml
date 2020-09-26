@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingTop="30dp"
+    android:paddingBottom="30dp"
+    tools:context=".fragments.SplashFragment">
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mb_account"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Acesse sua conta"
+        android:textAllCaps="false"
+       
+        android:textSize="16sp"
+        app:icon="@drawable/ic_account"
+        app:iconSize="35dp"
+        app:iconTint="#666" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mb_privacity"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Políticas de Privacidade"
+        android:textAllCaps="false"
+       
+        android:textSize="16sp"
+        app:icon="@drawable/ic_privacity"
+        app:iconSize="35dp"
+        android:layout_marginTop="10dp"
+        app:iconTint="#666" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mb_terms"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Termos de Uso"
+        android:textAllCaps="false"
+       
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        app:icon="@drawable/ic_user_terms"
+        app:iconSize="35dp"
+        app:iconTint="#666" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mb_site"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Acesse nosso site"
+        android:textAllCaps="false"
+        android:layout_marginTop="10dp"
+       
+        android:textSize="16sp"
+        app:icon="@drawable/ic_site"
+        app:iconSize="35dp"
+        app:iconTint="#666" />
+
+
+</LinearLayout>

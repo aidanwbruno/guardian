@@ -51,7 +51,6 @@
             android:id="@+id/action_goto_new_user"
             app:destination="@id/newUserFragment"
             app:enterAnim="@anim/fragment_close_enter"
-            app:launchSingleTop="true"
             app:popUpTo="@+id/loginFragment" />
     </fragment>
     <fragment

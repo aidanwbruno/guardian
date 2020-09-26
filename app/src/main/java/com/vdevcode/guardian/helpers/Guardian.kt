@@ -2,6 +2,7 @@ package com.vdevcode.guardian.helpers
 
 import android.app.Activity
 import android.app.Application
+import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -17,9 +18,15 @@ import android.content.ComponentName
 import android.content.DialogInterface
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.view.LayoutInflater
 import android.view.View
+import androidx.core.app.DialogCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+
+import com.vdevcode.guardian.R
+import kotlinx.android.synthetic.main.layout_guadian_dialog.view.*
+import java.util.zip.Inflater
 
 
 /**
@@ -32,6 +39,7 @@ class Guardian : Application() {
     companion object {
         var appContext: Context? = null
         var online = false
+
         /**
          * Exibe um toast na tela do usuário com uma mensagem de texto. Em poucos segundos a mesnagem some da tela.
          */
@@ -91,6 +99,20 @@ class Guardian : Application() {
             ) {
                 context.requestPermissions(permission, ConstantHelper.APP_PERMISSION_REQ_CODE)
             }
+        }
+
+        fun dialogViewMain(context: Context, onSite: () -> Unit, onTerms: () -> Unit, onPolicy: () -> Unit): Dialog {
+            val view = LayoutInflater.from(context).inflate(R.layout.layout_guadian_dialog, null, false)
+
+            view.mb_account.setOnClickListener { onSite.invoke() }
+            view.mb_site.setOnClickListener { onSite.invoke() }
+            view.mb_terms.setOnClickListener { onTerms.invoke() }
+            view.mb_privacity.setOnClickListener { onPolicy.invoke() }
+
+            val dialog = MaterialAlertDialogBuilder(context).apply {
+                setView(view)
+            }
+            return dialog.create()
         }
 
 

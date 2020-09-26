@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.media.AudioManager
+import android.net.Uri
 import android.speech.SpeechRecognizer
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
@@ -25,6 +26,7 @@ import com.vdevcode.guardian.extensions.mshow
 import com.vdevcode.guardian.helpers.*
 import com.vdevcode.guardian.models.Alert
 import com.vdevcode.guardian.repo.AppRepo
+import com.vdevcode.guardian.services.GuardianSpeechListenerService
 import com.vdevcode.guardion.helpers.AudioFileHelper
 import com.vdevcode.guardion.helpers.FileHelper
 import kotlinx.android.synthetic.main.activity_main.*
@@ -41,7 +43,19 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
 
     private var words = ArrayList<String>()
 
+    companion object {
+        var ended = false
+    }
+
     override fun homeIconClicked() {
+        //Guardian.toast("Home App Guardian")
+        Guardian.dialogViewMain(requireContext(), {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://sosguardian.app/")))
+        }, {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://sosguardian.app/"))) // link termos de uso
+        }, {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://sosguardian.app/"))) // link política de privacidade
+        }).show()
     }
 
     override fun createFragment() {
@@ -127,16 +141,18 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
                             startListenerButton()
                             Helper.setListening(ouvindo)
                             Helper.startService()
+                            ended = false
                         }
                     }
                 }
             } else {
-                Guardian.dialog(context!!, "", "\n \nDeseja finalizar o Guardian?", {
+                Guardian.dialog(requireContext(), "", "\n \nDeseja finalizar o Guardian?", {
 
                     stopListenerButton()
                     Helper.setListening(false)
                     Helper.stopService()
-
+                    //GuardianSpeechListenerService.serviceOn = false
+                    ended = true
                 }, {
                     Helper.setListening(true)
                     startListenerButton()
