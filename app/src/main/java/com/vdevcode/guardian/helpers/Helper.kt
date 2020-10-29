@@ -3,6 +3,7 @@ package com.vdevcode.guardian.helpers
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.icu.text.CaseMap
 import android.media.AudioManager
 import android.net.ConnectivityManager
 import android.net.Network
@@ -11,7 +12,13 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.vdevcode.guardian.R
+import com.vdevcode.guardian.auth.AppAuth
 import com.vdevcode.guardian.services.GuardianSpeechListenerService
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
 import java.text.Normalizer
 
 
@@ -94,51 +101,44 @@ object Helper {
 
     fun checkMusic(): Boolean {
         val manager = Guardian.appContext?.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
-        manager?.let { return it.isMusicActive || it.mode == AudioManager.MODE_IN_CALL}
+        manager?.let { return it.isMusicActive || it.mode == AudioManager.MODE_IN_CALL }
         return false
     }
 
-    fun showServiceNotification(context: Context) {
+    fun showServiceNotification(context: Context, id: Int = 1, title: String = "Guardian ativo", msg: String = "O Serviço está em execução", normal: Boolean = false) {
         val CHANNEL_ID = "my_app"
-
+        var channel: NotificationChannel? = null
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
+            channel = NotificationChannel(
                 CHANNEL_ID,
                 "MyApp", NotificationManager.IMPORTANCE_DEFAULT
             )
 
-            channel.setDescription("no sound")
-            channel.setSound(null, null)
-            channel.enableLights(false)
-            channel.enableVibration(false)
-
-            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(channel)
-            val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-                .setContentTitle("Guardian ativo")
-                .setContentText("O Serviço está em execução")
-                .setSound(null)
-                //.setDefaults(Notification.DEFAULT_ALL)
-                .setAutoCancel(true)
-
-            /*  val snoozeIntent = Intent(context, RestarVoZService::class.java).apply {
-                action = "com.vdevcode.action.PAUSE_LISTENER"
-                putExtra("not_id", 1)
+            channel?.apply {
+                channel.setDescription("no sound")
+                channel.setSound(null, null)
+                channel.enableLights(false)
+                channel.enableVibration(false)
             }
-
-
-            //val snoozePendingIntent: PendingIntent = PendingIntent.getBroadcast(context, 0, snoozeIntent, 0)
-            notification.addAction(
-                R.drawable.ic_audio_off, "Pausar",
-              //  snoozePendingIntent
-            )
-
-
-           */
-            (context as Service).startForeground(1, notification.build())
-        } else {
-            //startService()
         }
+
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (channel != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            manager.createNotificationChannel(channel)
+        }
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentTitle(title)
+            .setContentText(msg)
+            .setSound(null)
+            //.setDefaults(Notification.DEFAULT_ALL)
+            .setAutoCancel(true)
+        if (normal == false) {
+            (context as Service).startForeground(id, notification.build())
+        } else {
+            notification.setSmallIcon(R.drawable.app_logo)
+            manager.notify(id, notification.build())
+        }
+
     }
 
 
@@ -148,29 +148,29 @@ object Helper {
         val conn = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val netReqBuilder = NetworkRequest.Builder()
         conn.registerNetworkCallback(netReqBuilder.build(), object : ConnectivityManager.NetworkCallback() {
-                override fun onAvailable(network: Network?) {
-                    Guardian.online = true
-                    if (isListening())
-                        startService()
-                    //Liso.toast("conexão de rede, restabecida!")
-                }
+            override fun onAvailable(network: Network?) {
+                Guardian.online = true
+                if (isListening())
+                    startService()
+                //Liso.toast("conexão de rede, restabecida!")
+            }
 
-                override fun onLost(network: Network?) {
-                    Guardian.online = false
-                    Guardian.toast("Você está offline :( verifique sua conexão")
-                    if (isListening())
-                        stopService()
-                }
+            override fun onLost(network: Network?) {
+                Guardian.online = false
+                Guardian.toast("Você está offline :( verifique sua conexão")
+                if (isListening())
+                    stopService()
+            }
 
-                override fun onLosing(network: Network?, maxMsToLive: Int) {
-                   // Guardian.toast("Você está offline :( verifique sua conexão")
-                }
+            override fun onLosing(network: Network?, maxMsToLive: Int) {
+                // Guardian.toast("Você está offline :( verifique sua conexão")
+            }
 
-                override fun onUnavailable() {
-                    Guardian.online = false
-                    Guardian.toast("Rede não Disponível :(")
-                }
-            })
+            override fun onUnavailable() {
+                Guardian.online = false
+                Guardian.toast("Rede não Disponível :(")
+            }
+        })
     }
 
 
@@ -188,5 +188,43 @@ object Helper {
         }
     }
 
+    fun checkPayment(onComplete: (ok: Boolean) -> Unit) {
+        val userEmail = AppAuth.getUser()?.email ?: ""
+        if (userEmail.isBlank()) {
+            onComplete.invoke(false)
+            return
+        }
+        GlobalScope.launch {
+            ApiHelper.GET("https://sosguardian.app/wp-json/wc/v3/orders?consumer_key=ck_19e0f9f58ec5598f7e1187233412a0112c897ea8&consumer_secret=cs_5ef4d97790c4c02b7fadd5a611e8721a6d5973cc&status=completed&after=2020-10-01T00:01:00&per_page=20", {
+                try {
+                    val json = JSONArray(it)
+                    json?.let {
+                        for (i in 0 until it.length()) {
+                            val ped = json[i] as JSONObject
+                            val billing = ped.getJSONObject("billing")
+                            billing?.let {
+                                val email = it.getString("email")
+                                email?.let {
+                                    if (email.isNotBlank() && email.equals(userEmail)) {
+                                        onComplete.invoke(true)
+                                        return@GET
+                                    }
+                                }
+                                LogE("EMAILS : $email")
+                            }
+                        }
+                    }
+                } catch (ex: java.lang.Exception) {
+                    ex.printStackTrace()
+                    //Guardian.toast("Erro ao validar o app")
+                }
+                onComplete.invoke(false)
+            }, {
+                LogE("ERROR : $it")
+                //Guardian.toast("Erro se comunicar com servidor")
+                onComplete.invoke(false)
+            })
+        }
+    }
 
 }

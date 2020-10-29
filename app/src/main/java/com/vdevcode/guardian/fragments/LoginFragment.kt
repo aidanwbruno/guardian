@@ -5,8 +5,15 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.vdevcode.guardian.R
 import com.vdevcode.guardian.auth.AppAuth
+import com.vdevcode.guardian.helpers.ApiHelper
 import com.vdevcode.guardian.helpers.Guardian
+import com.vdevcode.guardian.helpers.Helper
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
+import java.lang.Exception
 
 /**
  * A simple [Fragment] subclass.
@@ -39,7 +46,7 @@ class LoginFragment : BaseFragment(R.layout.fragment_login, "Guardian Login", fa
         }
         mb_goto_create_user.setOnClickListener { findNavController().navigate(R.id.action_goto_new_user) }
         mb_recover_pass.setOnClickListener {
-            Guardian.dialog(context!!, "Recuperar Senha", "Entre em contato com administrador do Aplicativo para recuperar a sua senha", { it.dismiss() }, {}, "ok").show()
+            Guardian.dialog(requireContext(), "Recuperar Senha", "Entre em contato com administrador do Aplicativo para recuperar a sua senha", { it.dismiss() }, {}, "ok").show()
         }
     }
 

@@ -10,6 +10,52 @@
 
     <include layout="@layout/simple_toolbar" />
 
+
+    <LinearLayout
+        android:id="@+id/ll_block"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryDark"
+        android:elevation="10dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="30dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/app_logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Seu aplicativo GUARDIAN, ainda não foi ativado, estamos aguardando a confirmação de pagamento!"
+            android:textColor="#fff"
+            android:textSize="16sp" />
+
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/efab_check_pay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:text="verificar pagamento"
+            android:textColor="#eee" />
+
+        <TextView
+            android:id="@+id/tv_checking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="verificando..."
+            android:textColor="#fff"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -102,9 +148,9 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:backgroundTint="@android:color/holo_blue_dark"
-        app:elevation="6dp"
         android:gravity="center"
         android:src="@android:drawable/ic_menu_help"
+        app:elevation="6dp"
         app:fabCustomSize="30dp"
         app:fabSize="mini"
         app:layout_constraintEnd_toEndOf="parent"

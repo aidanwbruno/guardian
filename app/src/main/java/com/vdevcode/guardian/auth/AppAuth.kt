@@ -15,6 +15,7 @@ object AppAuth {
             if (it.isSuccessful) {
                 user.firestoreKey = getUserId()
                 AppFireDB.tryCreateNewModel(user, success) // add  USER DOCUMENT TO FIRE STORE
+                Guardian.getPrefDB()?.edit()?.putBoolean("app_status", false)?.apply();
             } else {
                 showFirebaseException(it.exception)
             }
@@ -99,8 +100,8 @@ object AppAuth {
     fun getUserId(): String {
         getUser()?.let {
             it?.email?.let {
-                if(it.isNotBlank()){
-                    return  it
+                if (it.isNotBlank()) {
+                    return it
                 }
             }
             return it.uid

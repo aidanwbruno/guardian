@@ -10,6 +10,7 @@ import com.vdevcode.guardian.auth.AppAuth
 import com.vdevcode.guardian.helpers.ConstantHelper
 import com.vdevcode.guardian.helpers.Helper
 import com.vdevcode.guardian.models.Alert
+import com.vdevcode.guardian.models.AppUser
 import com.vdevcode.guardian.models.BaseModel
 import com.vdevcode.guardion.helpers.AudioFileHelper
 import com.vdevcode.guardion.helpers.FileHelper
@@ -86,6 +87,7 @@ object AppFireDB {
                         callback[0].invoke()
                         //MyApp.toast("Dados Cadastrados com Sucesso :) !")
                         //MyApp.navigateTo(R.id.action_login_success, true, null)
+                        // todo put accout status here
                     } else {
                         res.exception?.run {
                             AppAuth.showFirebaseException(this)
@@ -111,6 +113,35 @@ object AppFireDB {
         return DB().collection(ConstantHelper.FIREBASE_USER_COLLECTION_NAME).document(key)
     }
 
+
+    fun checkActivation(emailKey: String, onComplete: (ok: Boolean) -> Unit) {
+        if (AppAuth.getUserId().isNullOrBlank()) {
+            onComplete.invoke(false)
+            return
+        }
+        findUserById(emailKey).get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                val user = it.result.toObject(AppUser::class.java)
+                user?.let {
+                    onComplete.invoke(it.ativo)
+                    return@addOnCompleteListener
+                }
+            }
+            onComplete.invoke(false)
+        }
+    }
+
+
+    fun activateApp(emailKey: String, onComplete: (ok: Boolean) -> Unit) {
+        findUserById(emailKey).update("ativo", true).addOnCompleteListener {
+            if (it.isSuccessful) {
+                onComplete.invoke(true)
+                return@addOnCompleteListener
+            }
+            onComplete.invoke(false)
+        }
+    }
+
     fun deleteDocument(model: BaseModel) {
         DB().collection(model.collectionName).document(model.firestoreKey).delete()
     }
@@ -127,6 +158,7 @@ object AppFireDB {
     //.whereLessThanOrEqualTo(field, value)
 
     fun list(collectionName: String) = DB().collection(collectionName)
+
     /**
      * Get the Firestore Database Instance
      */

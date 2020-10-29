@@ -47,20 +47,25 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
         fab_save_user.setOnClickListener {
             if (validate()) {
                 if (ll_has_car.visible() && user.carros.isNullOrEmpty()) {
-                    Guardian.dialog(context!!, "Atenção", "Você, abriu os campos de cadastro de veículo, deseja adicionar algum, antes de finalizar?", {
+                    Guardian.dialog(requireContext(), "Atenção", "Você, abriu os campos de cadastro de veículo, deseja adicionar algum, antes de finalizar?", {
                         it.dismiss()
                     }, {
-                        Guardian.snack(view!!, "Aguarde.. Estamos criando a sua conta :)")
+                        Guardian.snack(requireView(), "Aguarde.. Estamos criando a sua conta :)")
                         AppAuth.createUserAccount(buildUser()) {
                             Guardian.toast("Conta criada com sucesso!")
-                            findNavController().navigate(R.id.action_user_created)
+                            // check ativo
+                            Guardian.dialog(requireContext(), "Atenção", "Sua conta foi criada com sucesso, assim que indentificarmos seu pagamento, lhe avisaremos e você podera usar GUARDIAN normalmente", {
+                                findNavController().navigate(R.id.action_user_created)
+                            }, {}, "ok").show()
                         }
                     }, "Adicionar", "Continuar").show()
                 } else {
-                    Guardian.snack(view!!, "Aguarde.. Estamos criando a sua conta :)")
+                    Guardian.snack(requireView(), "Aguarde.. Estamos criando a sua conta :)")
                     AppAuth.createUserAccount(buildUser()) {
                         Guardian.toast("Conta criada com sucesso!")
-                        findNavController().navigate(R.id.action_user_created)
+                        Guardian.dialog(requireContext(), "Atenção", "Sua conta foi criada com sucesso, assim que indentificarmos seu pagamento, lhe avisaremos e você podera usar GUARDIAN normalmente", {
+                            findNavController().navigate(R.id.action_user_created)
+                        }, {}, "ok").show()
                     }
                 }
             }
@@ -92,6 +97,7 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
         bairro = et_newuser_bairro.text.toString()
         cidade = et_newuser_city.text.toString()
         estado = et_newuser_uf.text.toString()
+        ativo = false // only after payment
         complemento = et_newuser_complemento.text.toString()
     }
 
@@ -131,7 +137,7 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
         val checkPass = et_newuser_checkpass.text.toString()
 
         if (!pass.equals(checkPass)) {
-            Guardian.snack(view!!, "As senhas informadas não são iguais")
+            Guardian.snack(requireView(), "As senhas informadas não são iguais")
             return false
         }
 
@@ -142,7 +148,7 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
     private fun TextInputLayout.ok(et: TextInputEditText, field: String): Boolean {
         if (et.text.toString().isBlank()) {
             this.error = "O campo $field  é obrigatório"
-            Guardian.snack(view!!, "O campo $field  é obrigatório")
+            Guardian.snack(requireView(), "O campo $field  é obrigatório")
             return false
         }
         return true
@@ -172,7 +178,7 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
         user.carros?.put(car.marca.plus(car.modelo), car)
         carList += "Carrro: ${car.marca}, ${car.modelo}, ${car.cor}, placa: ${car.placa} \n"
         tv_mycars_list.text = carList
-        Guardian.snack(view!!, "Carro adicionado")
+        Guardian.snack(requireView(), "Carro adicionado")
         et_newuser_placa.text?.clear()
         et_newuser_marca.text?.clear()
         et_newuser_model.text?.clear()

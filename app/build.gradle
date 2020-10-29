@@ -73,6 +73,10 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
+
+    // Kotlin + coroutines
+    //implementation "androidx.work:work-runtime-ktx:$work_version"
+
     // Lifecycle components
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"

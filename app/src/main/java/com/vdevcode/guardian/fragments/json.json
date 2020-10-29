@@ -1,0 +1,158 @@
+[
+  {
+    "id": 53,
+    "parent_id": 0,
+    "number": "53",
+    "order_key": "wc_order_pSQeBytkGqkFj",
+    "created_via": "checkout",
+    "version": "4.0.0",
+    "status": "completed",
+    "currency": "BRL",
+    "date_created": "2020-10-07T09:52:35",
+    "date_created_gmt": "2020-10-07T12:52:35",
+    "date_modified": "2020-10-07T10:04:40",
+    "date_modified_gmt": "2020-10-07T13:04:40",
+    "discount_total": "0.00",
+    "discount_tax": "0.00",
+    "shipping_total": "0.00",
+    "shipping_tax": "0.00",
+    "cart_tax": "0.00",
+    "total": "1.00",
+    "total_tax": "0.00",
+    "prices_include_tax": false,
+    "customer_id": 0,
+    "customer_ip_address": "189.121.177.189",
+    "customer_user_agent": "Mozilla\/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/85.0.4183.121 Safari\/537.36",
+    "customer_note": "",
+    "billing": {
+      "first_name": "Mauro",
+      "last_name": "Nascimento",
+      "company": "Blindex Servi\u00e7os",
+      "address_1": "Av.\u00c1gua Fria, 1511",
+      "address_2": "",
+      "city": "S\u00e3o Paulo",
+      "state": "SP",
+      "postcode": "02333-001",
+      "country": "BR",
+      "email": "mauro.nascimento@blindexservicos.com.br",
+      "phone": "11991085703"
+    },
+    "shipping": {
+      "first_name": "",
+      "last_name": "",
+      "company": "",
+      "address_1": "",
+      "address_2": "",
+      "city": "",
+      "state": "",
+      "postcode": "",
+      "country": ""
+    },
+    "payment_method": "rede_credit",
+    "payment_method_title": "Pague com a Rede",
+    "transaction_id": "10022010070927508960",
+    "date_paid": "2020-10-07T09:52:57",
+    "date_paid_gmt": "2020-10-07T12:52:57",
+    "date_completed": "2020-10-07T10:04:40",
+    "date_completed_gmt": "2020-10-07T13:04:40",
+    "cart_hash": "4e5ddcb372d0d48373ec9da3f207dd2b",
+    "meta_data": [
+      {
+        "id": 1175,
+        "key": "is_vat_exempt",
+        "value": "no"
+      },
+      {
+        "id": 1177,
+        "key": "_wc_rede_transaction_return_code",
+        "value": "00"
+      },
+      {
+        "id": 1178,
+        "key": "_wc_rede_transaction_return_message",
+        "value": "Success."
+      },
+      {
+        "id": 1179,
+        "key": "_wc_rede_transaction_installments",
+        "value": "1"
+      },
+      {
+        "id": 1180,
+        "key": "_wc_rede_transaction_id",
+        "value": "10022010070927508960"
+      },
+      {
+        "id": 1183,
+        "key": "_wc_rede_transaction_bin",
+        "value": "536832"
+      },
+      {
+        "id": 1184,
+        "key": "_wc_rede_transaction_last4",
+        "value": "2678"
+      },
+      {
+        "id": 1185,
+        "key": "_wc_rede_transaction_nsu",
+        "value": "125774835"
+      },
+      {
+        "id": 1186,
+        "key": "_wc_rede_transaction_authorization_code",
+        "value": "878240"
+      },
+      {
+        "id": 1187,
+        "key": "_wc_rede_transaction_holder",
+        "value": "Mauro R Nascimento"
+      },
+      {
+        "id": 1188,
+        "key": "_wc_rede_transaction_expiration",
+        "value": "03\/2027"
+      },
+      {
+        "id": 1189,
+        "key": "_wc_rede_transaction_environment",
+        "value": "production"
+      }
+    ],
+    "line_items": [
+      {
+        "id": 6,
+        "name": "Produto Teste 1 real",
+        "product_id": 50,
+        "variation_id": 0,
+        "quantity": 1,
+        "tax_class": "",
+        "subtotal": "1.00",
+        "subtotal_tax": "0.00",
+        "total": "1.00",
+        "total_tax": "0.00",
+        "taxes": [],
+        "meta_data": [],
+        "sku": "preco01",
+        "price": 1
+      }
+    ],
+    "tax_lines": [],
+    "shipping_lines": [],
+    "fee_lines": [],
+    "coupon_lines": [],
+    "refunds": [],
+    "currency_symbol": "R$",
+    "_links": {
+      "self": [
+        {
+          "href": "https:\/\/sosguardian.app\/wp-json\/wc\/v3\/orders\/53"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https:\/\/sosguardian.app\/wp-json\/wc\/v3\/orders"
+        }
+      ]
+    }
+  }
+]
