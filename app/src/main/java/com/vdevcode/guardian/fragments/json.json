@@ -145,12 +145,12 @@
     "_links": {
       "self": [
         {
-          "href": "https:\/\/sosguardian.app\/wp-json\/wc\/v3\/orders\/53"
+          "href": "https:\/\/meuguardian.com.br\/wp-json\/wc\/v3\/orders\/53"
         }
       ],
       "collection": [
         {
-          "href": "https:\/\/sosguardian.app\/wp-json\/wc\/v3\/orders"
+          "href": "https:\/\/meuguardian.com.br\/wp-json\/wc\/v3\/orders"
         }
       ]
     }

@@ -52,11 +52,11 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
     override fun homeIconClicked() {
         //Guardian.toast("Home App Guardian")
         Guardian.dialogViewMain(requireContext(), {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://sosguardian.app/")))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://meuguardian.com.br/")))
         }, {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://sosguardian.app/"))) // link termos de uso
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://meuguardian.com.br/"))) // link termos de uso
         }, {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://sosguardian.app/"))) // link política de privacidade
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://meuguardian.com.br/"))) // link política de privacidade
         }).show()
     }
 
@@ -135,7 +135,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
             //speechListenerCliente.setRecognitionListener(this)
             //start()
         } else {
-            Guardian.dialog(requireContext(), "Alerta", "Seu Dispositivo não possui reconhecimento de voz, por tanto o Aplicativo não irá funcionar corretamente", {}, {}, "Ok").show()
+            Guardian.dialog(requireContext(), "Alerta", "Seu Dispositivo não possui reconhecimento de voz, portanto o Aplicativo não irá funcionar corretamente", {}, {}, "Ok").show()
         }
         Guardian.requestAppPermissions(this, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION)
 
@@ -284,7 +284,8 @@ class MainFragment : BaseFragment(R.layout.fragment_main, "Guardian App", false,
 
     override fun onDestroy() {
         Helper.LogE("ON DESTROY")
-        requireActivity()?.ll_gps_check.mhide()
+        //Removido aqui ---- requireActivity()?.ll_gps_check.m
+        //Removido aqui ---- hide()
         super.onDestroy()
     }
 

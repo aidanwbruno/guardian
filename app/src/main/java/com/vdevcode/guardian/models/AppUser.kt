@@ -24,6 +24,7 @@ class AppUser(
     var name: String,
     var email: String,
     var cpf: String,
+    var telefone: String,
     @get:Exclude @set:Exclude @Exclude
     var password: String, // only for login
     var nascimento: String,
@@ -48,7 +49,7 @@ class AppUser(
     // var LOCATIONS: MutableMap<String, String>? = mutableMapOf()
     var ultimaLocalizacao: String
 
-    constructor() : this(0, "", "", "", "", "", "", true, "", "", "", "", "", "", null, mutableMapOf()) {}
+    constructor() : this(0, "", "","", "", "", "", "", true, "", "", "", "", "", "", null, mutableMapOf()) {}
 
     init {
         collectionName = ConstantHelper.FIREBASE_USER_COLLECTION_NAME

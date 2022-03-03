@@ -26,12 +26,13 @@ import com.google.gson.Gson
 import com.vdevcode.guardian.auth.AppAuth
 import com.vdevcode.guardian.database.AppFireDB
 import com.vdevcode.guardian.models.Alert
+import java.lang.Exception
 import java.util.*
 import kotlin.math.min
 
 
-const val LOCATION_UPADATE_INTERVAL = 60000L // 1 min
-const val FAST_LOCATION_UPADATE_INTERVAL = 30000L // 5 secounds
+const val LOCATION_UPADATE_INTERVAL = 10000L // 1 min
+const val FAST_LOCATION_UPADATE_INTERVAL = 10000L // 5 secounds
 const val REQUEST_CHECK_SETTINGS = 383 // req code
 
 class GoogleLocationHelper {
@@ -125,6 +126,7 @@ class GoogleLocationHelper {
 
     private fun addLocationCallback() {
         locationCallback = object : LocationCallback() {
+
             override fun onLocationResult(result: LocationResult?) {
                 result?.lastLocation?.let {
                     currentLocation = UserLocation().apply {
@@ -132,8 +134,9 @@ class GoogleLocationHelper {
                         latitude = it.latitude
                     }
                     locationOk = true
-                    Helper.LogW("Location Change")
                     val locationString = currentLocation?.toJson()
+                    Helper.LogW("Location Change $locationString")
+
                     locationString?.let { loc ->
                         // update user last location
                         updateMyCurrentLocation(loc, false)
@@ -143,10 +146,39 @@ class GoogleLocationHelper {
                                 if (ref.isSuccessful) {
                                     val alertDoc = ref.result?.toObject(Alert::class.java)
                                     if (alertDoc != null && alertDoc.open) {
+
+                                        // evitar mensagens de mais no dashboard
+                                            try {
+                                                val alertLocation = Gson().fromJson(alertDoc.ultimaLocalizacao, UserLocation::class.java)
+                                                alertLocation?.let { aLoc ->
+                                                    currentLocation?.let { cLoc ->
+                                                        if (!aLoc.latitude.isNaN() && !aLoc.longitude.isNaN()) {
+                                                            val latA = String.format("%.5f", aLoc.latitude).replace(",", ".").toDouble()
+                                                            val logA = String.format("%.5f", aLoc.longitude).replace(",", ".").toDouble()
+
+                                                            val latC = String.format("%.5f", cLoc.latitude).replace(",", ".").toDouble()
+                                                            val logC = String.format("%.5f", cLoc.longitude).replace(",", ".").toDouble()
+                                                            // if location for o mesmo então não atualiza o usuário
+
+                                                            val difLat = latA - latC
+                                                            val diflog = logA - logC
+
+                                                            val resLat = if (difLat < 0.0) difLat.times(-1) else difLat
+                                                            val resLog = if (diflog < 0.0) diflog.times(-1) else diflog
+                                                            if (resLat <= 0.05 && resLog <= 0.05) {
+                                                                Helper.LogW("Location Change a loc -> $aLoc")
+                                                                return@addOnCompleteListener
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }catch (ex:Exception){
+                                                Helper.LogE("erro em não enviar local")
+                                            }
                                         // update user location
                                         AppFireDB.findUserById(AppAuth.getUserId()).collection(ConstantHelper.FIREBASE_USER_LOCATIONS_COLLECTION_NAME).document(Calendar.getInstance().timeInMillis.toString()).set(mapOf("point" to loc)).addOnCompleteListener {
                                             if (it.isSuccessful) {
-                                                Helper.LogW("Location added to user")
+                                                //Helper.LogW("Location added to user")
                                                 Helper.LogW("Location :  LAT: ${currentLocation?.latitude} , LNG: ${currentLocation?.longitude}")
                                                 Guardian.toast("Location (${currentLocation?.latitude}, ${currentLocation?.longitude})")
                                                 updateMyCurrentLocation(loc, true)
@@ -162,6 +194,8 @@ class GoogleLocationHelper {
                             }
                         }
                     }
+
+
                 }
             }
         }

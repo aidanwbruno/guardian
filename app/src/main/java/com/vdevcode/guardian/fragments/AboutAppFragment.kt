@@ -32,7 +32,7 @@ class AboutAppFragment : BaseFragment(R.layout.fragment_about_app, "Sobre o Guar
     override fun buildFragment() {
         requireActivity().ll_gps_check.mhide()
         tv_site_link.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://sosguardian.app/")))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://meuguardian.com.br/")))
         }
     }
 

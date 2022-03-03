@@ -4,6 +4,7 @@ package com.vdevcode.guardian.fragments
 import androidx.fragment.app.Fragment
 import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
+import br.com.receitasdecodigo.utils.MaskEditUtil
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.vdevcode.guardian.R
@@ -54,18 +55,17 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
                         AppAuth.createUserAccount(buildUser()) {
                             Guardian.toast("Conta criada com sucesso!")
                             // check ativo
-                            Guardian.dialog(requireContext(), "Atenção", "Sua conta foi criada com sucesso, assim que indentificarmos seu pagamento, lhe avisaremos e você podera usar GUARDIAN normalmente", {
-                                findNavController().navigate(R.id.action_user_created)
-                            }, {}, "ok").show()
+                            Guardian.toast("Sua conta foi criada com sucesso, assim que indentificarmos seu pagamento, lhe avisaremos e você podera usar GUARDIAN normalmente!")
+                            findNavController().navigate(R.id.action_user_created)
+
                         }
                     }, "Adicionar", "Continuar").show()
                 } else {
                     Guardian.snack(requireView(), "Aguarde.. Estamos criando a sua conta :)")
                     AppAuth.createUserAccount(buildUser()) {
                         Guardian.toast("Conta criada com sucesso!")
-                        Guardian.dialog(requireContext(), "Atenção", "Sua conta foi criada com sucesso, assim que indentificarmos seu pagamento, lhe avisaremos e você podera usar GUARDIAN normalmente", {
-                            findNavController().navigate(R.id.action_user_created)
-                        }, {}, "ok").show()
+                        Guardian.toast("Sua conta foi criada com sucesso, assim que indentificarmos seu pagamento, lhe avisaremos e você podera usar GUARDIAN normalmente!")
+                        findNavController().navigate(R.id.action_user_created)
                     }
                 }
             }
@@ -83,11 +83,19 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
                 addCar()
             }
         }
+
+        et_newuser_cpf.addTextChangedListener(MaskEditUtil.mask(et_newuser_cpf, MaskEditUtil.FORMAT_CPF));
+        et_newuser_phone.addTextChangedListener(MaskEditUtil.mask(et_newuser_phone, MaskEditUtil.FORMAT_FONE));
+        et_newuser_date.addTextChangedListener(MaskEditUtil.mask(et_newuser_date, MaskEditUtil.FORMAT_DATE));
+        et_newuser_cep.addTextChangedListener(MaskEditUtil.mask(et_newuser_cep, MaskEditUtil.FORMAT_CEP));
     }
+
+
 
     private fun buildUser() = user.apply {
         name = et_newuser_name.text.toString()
         email = et_newuser_email.text.toString()
+        telefone = et_newuser_phone.text.toString()
         nascimento = et_newuser_date.text.toString()
         password = et_newuser_pass.text.toString()
         cep = et_newuser_cep.text.toString()
@@ -131,8 +139,7 @@ class NewUserFragment : BaseFragment(R.layout.fragment_new_user, "Cadastro de Us
                 til_user_num.ok(et_newuser_num, "Número") &&
                 til_user_bairro.ok(et_newuser_bairro, "Bairro") &&
                 til_user_city.ok(et_newuser_city, "Cidade") &&
-                til_user_uf.ok(et_newuser_uf, "Estado") &&
-                til_user_complemento.ok(et_newuser_complemento, "Complemento")
+                til_user_uf.ok(et_newuser_uf, "Estado")
         val pass = et_newuser_pass.text.toString()
         val checkPass = et_newuser_checkpass.text.toString()
 

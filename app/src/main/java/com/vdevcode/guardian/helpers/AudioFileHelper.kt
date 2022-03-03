@@ -161,7 +161,7 @@ object AudioFileHelper {
             val audioRef = fireStorage().child(audioName)
             val task = audioRef.putStream(currentAudio?.inputStream()!!)
             task.addOnFailureListener {
-                Guardian.toast("Erro ao Enviar Aodio ao Firebase")
+                Guardian.toast("Erro ao Enviar Audio ao Firebase")
             }.addOnSuccessListener {
                 Guardian.toast("Áudio enviado com sucesso para Firebase")
                 audioRef.downloadUrl.addOnCompleteListener {

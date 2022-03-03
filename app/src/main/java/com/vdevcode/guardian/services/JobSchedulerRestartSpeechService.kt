@@ -13,6 +13,9 @@ import com.vdevcode.guardian.helpers.Guardian
 import com.vdevcode.guardian.helpers.Helper
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class JobSchedulerRestartSpeechService : JobService() {
@@ -44,7 +47,9 @@ class JobSchedulerRestartSpeechService : JobService() {
                         Helper.checkPayment {
                             Helper.LogI("Pagamento encontrado $it...")
                             if (it) {
-                                checkAppFirebase()
+                                GlobalScope.launch(Dispatchers.Main) {
+                                    checkAppFirebase()
+                                }
                             } else {
                                 Guardian.getPrefDB()?.edit()?.putBoolean("app_status", false)?.apply()
                                 Guardian.getPrefDB()?.edit()?.putBoolean("app_payment", false)?.apply()

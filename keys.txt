@@ -1,0 +1,24 @@
+ck_19e0f9f58ec5598f7e1187233412a0112c897ea8
+
+cs_5ef4d97790c4c02b7fadd5a611e8721a6d5973cc
+
+
+
+OkHttpClient client = new OkHttpClient();
+
+Request request = new Request.Builder()
+.url("https://test.com/wp-json/wc/v3/customers? 
+oauth_consumer_key=KEY&oauth_token=&oauth_signature_method=HMAC-HA1&oauth_timestamp=1564471240&oauth_nonce=iEo45PESRdt&oauth_version=1.0&oauth_signature=NQR4Xr5OKlb3H+rL0y2PNLdfXpY=")
+  .get()
+  .addHeader("Content-Type", "application/x-www-form-urlencoded")
+  .addHeader("User-Agent", "PostmanRuntime/7.15.2")
+  .addHeader("Accept", "*/*")
+  .addHeader("Cache-Control", "no-cache")
+  .addHeader("Postman-Token", "6fb2e16e-376c-453a-bf30-18ef6c00020c,c14db88a-55dd-4287-a132-8ca441a5e3f0")
+  .addHeader("Host", "test.com")
+  .addHeader("Accept-Encoding", "gzip, deflate")
+  .addHeader("Connection", "keep-alive")
+  .addHeader("cache-control", "no-cache")
+  .build();
+
+Response response = client.newCall(request).execute();

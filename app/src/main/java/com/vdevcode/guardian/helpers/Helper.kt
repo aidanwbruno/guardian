@@ -13,6 +13,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.vdevcode.guardian.R
+import com.vdevcode.guardian.activities.MainActivity
 import com.vdevcode.guardian.auth.AppAuth
 import com.vdevcode.guardian.services.GuardianSpeechListenerService
 import kotlinx.coroutines.GlobalScope
@@ -121,7 +122,9 @@ object Helper {
                 channel.enableVibration(false)
             }
         }
-
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (channel != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             manager.createNotificationChannel(channel)
@@ -130,12 +133,14 @@ object Helper {
             .setContentTitle(title)
             .setContentText(msg)
             .setSound(null)
+            .setSmallIcon(R.mipmap.ic_launcher_foreground)
             //.setDefaults(Notification.DEFAULT_ALL)
+            .setFullScreenIntent(PendingIntent.getActivity(context, 0, intent, 0), true)
             .setAutoCancel(true)
         if (normal == false) {
             (context as Service).startForeground(id, notification.build())
         } else {
-            notification.setSmallIcon(R.drawable.app_logo)
+            notification.setSmallIcon(R.mipmap.ic_launcher_round)
             manager.notify(id, notification.build())
         }
 
@@ -195,7 +200,7 @@ object Helper {
             return
         }
         GlobalScope.launch {
-            ApiHelper.GET("https://sosguardian.app/wp-json/wc/v3/orders?consumer_key=ck_19e0f9f58ec5598f7e1187233412a0112c897ea8&consumer_secret=cs_5ef4d97790c4c02b7fadd5a611e8721a6d5973cc&status=completed&after=2020-10-01T00:01:00&per_page=20", {
+            ApiHelper.GET("https://meuguardian.com.br/wp-json/wc/v3/orders?consumer_key=ck_19e0f9f58ec5598f7e1187233412a0112c897ea8&consumer_secret=cs_5ef4d97790c4c02b7fadd5a611e8721a6d5973cc&status=completed&after=2020-10-01T00:01:00&per_page=20", {
                 try {
                     val json = JSONArray(it)
                     json?.let {

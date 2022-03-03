@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 object ApiHelper {
 
     const val API_SCHEME = "https" // local use http
-    const val API_SERVER = "sosguardian.app" // use https
+    const val API_SERVER = "meuguardian.com.br" // use https
     //https://orders?consumer_key=ck_19e0f9f58ec5598f7e1187233412a0112c897ea8&consumer_secret=cs_5ef4d97790c4c02b7fadd5a611e8721a6d5973cc
 
     //const val API_SERVER = "192.168.0.105"
@@ -32,7 +32,7 @@ object ApiHelper {
                 .get()
                 .addHeader("Authorization", Credentials.basic("ck_19e0f9f58ec5598f7e1187233412a0112c897ea8", "cs_5ef4d97790c4c02b7fadd5a611e8721a6d5973cc"))
                 .addHeader("accept", "application/json")
-                //.url("https://sosguardian.app/wp-json/wc/v3/customers?email=aidanwbruno%40gmail.com&consumer_key=ck_19e0f9f58ec5598f7e1187233412a0112c897ea8&consumer_secret=cs_5ef4d97790c4c02b7fadd5a611e8721a6d5973cc&status=completed")
+                //.url("https://meuguardian.com.br/wp-json/wc/v3/customers?email=aidanwbruno%40gmail.com&consumer_key=ck_19e0f9f58ec5598f7e1187233412a0112c897ea8&consumer_secret=cs_5ef4d97790c4c02b7fadd5a611e8721a6d5973cc&status=completed")
                 .url(url)
                 .build()
 

@@ -22,9 +22,11 @@ import com.sac.speech.SpeechRecognitionNotAvailable
 import com.vdevcode.guardian.auth.AppAuth
 import com.vdevcode.guardian.database.AppFireDB
 import com.vdevcode.guardian.fragments.MainFragment
+import com.vdevcode.guardian.helpers.ConstantHelper
 import com.vdevcode.guardian.helpers.Guardian
 import com.vdevcode.guardian.helpers.Helper
 import com.vdevcode.guardian.models.Alert
+import com.vdevcode.guardian.models.BaseModel
 import com.vdevcode.guardian.models.Command
 import com.vdevcode.guardian.repo.AppRepo
 import com.vdevcode.guardion.helpers.AudioFileHelper
@@ -208,11 +210,16 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
     override fun onSpeechResult(result: String?) {
         if (!result.isNullOrBlank() && result.length > 1 && !result.equals("\n")) {
             val normalizer = Helper.normalizeText(result)
+            var countPalavras = 0
             myCommands.forEach {
                 if (normalizer.contains(it.value, true)) {
-                    sendAlert()
-                    Guardian.toast("Um Alerta foi Acionado, aqui pegamos todas as informações e mandaremos para o serividor")
+                    countPalavras++
                 }
+            }
+            if(countPalavras >= 3){
+                sendAlert()
+                countPalavras = 0
+                Guardian.toast("Um Alerta foi Acionado, aqui pegamos todas as informações e mandaremos para o serividor")
             }
         }
         //Helper.LogI("RESUL SPEECH")
@@ -235,8 +242,8 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
                     muteBeep()
                     Speech.getInstance().stopListening()
                     Helper.LogE("UM MUTE")
-                    speechOn = false
                     //unmuteBeep()
+                    speechOn = false
                 } else {
 
                     Speech.getInstance().stopTextToSpeech()
@@ -428,32 +435,67 @@ class GuardianSpeechListenerService : Service(), SpeechDelegate, Speech.stopDueT
     private fun sendAlert() {
         //val loc = Gson().toJson(googleLocationHelper.currentLocation)
         if (AppFireDB.currentAlert == null) {
-            val alert = Alert().apply {
-                count = 1
-                open = true
-                audio = "gravando audio..."
-                usuarioKey = AppAuth.getUserId()
-            }
-            AppFireDB.insertModel(alert, OnCompleteListener {
+
+            //check if has an alter active for user
+
+            AppFireDB.DB().collection(ConstantHelper.FIREBASE_ALERT_COLLECTION_NAME).whereEqualTo("usuarioKey", AppAuth.getUserId()).whereEqualTo("open", true).get().addOnCompleteListener {
+
+                var alert: BaseModel? = Alert().apply {
+                    count = 1
+                    open = true
+                    audio = "gravando audio..."
+                    usuarioKey = AppAuth.getUserId()
+                }
                 if (it.isSuccessful) {
-                    AppFireDB.currentAlert = alert
-                    AppFireDB.currentAlert?.firestoreKey = it.result?.id!!
-                    if (alert.audio.isBlank() || alert.audio.contains("gravan", true)) {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            recording = true
-                            stopListening()
-                            delay(2000)
-                            Helper.LogW("Iniciando Gravação de Audio")
-                            AudioFileHelper.startRecordAudio(this@GuardianSpeechListenerService) {
-                                recording = false
-                                Helper.LogW("Gravação de Audio Completa Enviando ao Firebase")
+                    val doc = it.result?.firstOrNull()
+                    doc?.let {
+                        alert = doc.toObject(Alert::class.java)
+                        alert?.let {
+                            val al = it as Alert
+                            AppFireDB.currentAlert = al
+                            AppFireDB.currentAlert?.firestoreKey = doc.id
+                            if (al.audio.isBlank() || al.audio.contains("gravan", true)) {
+                                GlobalScope.launch(Dispatchers.Main) {
+                                    recording = true
+                                    stopListening()
+                                    delay(2000)
+                                    Helper.LogW("Iniciando Gravação de Audio")
+                                    AudioFileHelper.startRecordAudio(this@GuardianSpeechListenerService) {
+                                        recording = false
+                                        Helper.LogW("Gravação de Audio Completa Enviando ao Firebase")
+                                    }
+                                }
                             }
+                            AppFireDB.updateCurrentAlert(null)
+                            return@addOnCompleteListener
                         }
                     }
-                } else {
-                    AppFireDB.currentAlert = null
                 }
-            })
+                alert?.let {
+                    val al = it as Alert
+                    AppFireDB.insertModel(alert!!, OnCompleteListener {
+                        if (it.isSuccessful) {
+                            AppFireDB.currentAlert = al
+                            AppFireDB.currentAlert?.firestoreKey = it.result?.id!!
+                            if (al.audio.isBlank() || al.audio.contains("gravan", true)) {
+                                GlobalScope.launch(Dispatchers.Main) {
+                                    recording = true
+                                    stopListening()
+                                    delay(2000)
+                                    Helper.LogW("Iniciando Gravação de Audio")
+                                    AudioFileHelper.startRecordAudio(this@GuardianSpeechListenerService) {
+                                        recording = false
+                                        Helper.LogW("Gravação de Audio Completa Enviando ao Firebase")
+                                    }
+                                }
+                            }
+                        } else {
+                            AppFireDB.currentAlert = null
+                        }
+                    })
+                }
+            }
+
         } else {
             AppFireDB.updateCurrentAlert(null)
         }

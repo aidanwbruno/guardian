@@ -24,7 +24,7 @@ object AppAuth {
 
 
     /**
-     * Realixa login com firebase, usando um email e password. O Usuario deve ter sua conta criada no firebase authentication
+     * Realiza login com firebase, usando um email e password. O Usuario deve ter sua conta criada no firebase authentication
      */
     fun singInWithEmailAndPassword(email: String, pass: String, callback: () -> Any?) {
         getAuth().signInWithEmailAndPassword(email, pass).addOnCompleteListener {
